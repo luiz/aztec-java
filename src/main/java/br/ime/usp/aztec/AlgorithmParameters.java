@@ -15,6 +15,11 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -37,6 +42,7 @@ public final class AlgorithmParameters {
 	private final double t;
 	private final double k;
 	private final double n;
+	private final Reader input;
 
 	/**
 	 * @param commandLine
@@ -48,29 +54,46 @@ public final class AlgorithmParameters {
 			CommandLine options = parser.parse(getCommandLineOptions(),
 					commandLine);
 			if (options.hasOption('h')) {
-				printHelpAndExit();
+				printHelpAndExitWithCode(0);
 			}
 			this.k = Double.parseDouble(options.getOptionValue('K'));
 			this.t = Double.parseDouble(options.getOptionValue('T',
 					String.valueOf(DEFAULT_T)));
 			this.n = Double.parseDouble(options.getOptionValue('N',
 					String.valueOf(DEFAULT_N)));
+			this.input = openInputGivenIn(options);
 		} catch (ParseException e) {
-			printHelpAndExit();
+			printHelpAndExitWithCode(1);
 			throw new RuntimeException("To keep the compiler happy");
 		}
 	}
 
+	/**
+	 * @return Minimum size of line to not be considered part of slope
+	 */
 	public double getT() {
 		return this.t;
 	}
 
+	/**
+	 * @return Maximum variation of voltage to be considered a line
+	 */
 	public double getK() {
 		return this.k;
 	}
 
+	/**
+	 * @return Maximum length of a line
+	 */
 	public double getN() {
 		return this.n;
+	}
+
+	/**
+	 * @return Reader for input signal
+	 */
+	public Reader getInput() {
+		return this.input;
 	}
 
 	private Options getCommandLineOptions() {
@@ -81,22 +104,42 @@ public final class AlgorithmParameters {
 		optionK.setRequired(true);
 		options.addOption(optionK);
 
-		options.addOption("T", true,
-				"Minimum size of line to not be considered part of slope");
-		options.addOption("N", true, "Maximum length of a line");
+		options.addOption(
+				"T",
+				true,
+				"Minimum size of line to not be considered part of slope. " +
+				"Defaults to 4 samples");
+		options.addOption("N", true,
+				"Maximum length of a line. Defaults to 25 samples");
 		options.addOption("h", false, "Prints this help and exit");
+		options.addOption("i", true,
+				"Specify a input file. " +
+				"If none specified, reads signal from standard input");
 		return options;
 	}
 
-	private void printHelpAndExit() {
+	private Reader openInputGivenIn(CommandLine options) {
+		if (options.hasOption('i')) {
+			try {
+				return new FileReader(options.getOptionValue('i'));
+			} catch (FileNotFoundException e) {
+				System.err.println(e.getMessage());
+				System.exit(2);
+			}
+		}
+		return new InputStreamReader(System.in);
+	}
+
+	private void printHelpAndExitWithCode(int code) {
 		HelpFormatter help = new HelpFormatter();
 		help.printHelp(
 				60,
 				"aztec",
 				"AZTEC algorithm encoder",
 				getCommandLineOptions(),
-				"Feel free to send any comments to lreal at ime dot usp dot br",
+				"Feel free to send any comments to " +
+				"lreal at ime dot usp dot br",
 				true);
-		System.exit(0);
+		System.exit(code);
 	}
 }

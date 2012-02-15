@@ -19,6 +19,7 @@ public final class Encoder {
 
 	public static void main(String[] args) throws Exception {
 		AlgorithmParameters params = new AlgorithmParameters(args);
+		Iterable<Double> signal = new SignalParser().parse(params.getInput());
 	}
 
 }
