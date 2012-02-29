@@ -15,11 +15,22 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
+import org.apache.commons.cli.ParseException;
+
 public final class Encoder {
 
 	public static void main(String[] args) throws Exception {
-		AlgorithmParameters params = new AlgorithmParameters(args);
-		Iterable<Double> signal = new SignalParser().parse(params.getInput());
+		try {
+			AlgorithmParameters params = new AlgorithmParameters(args);
+			if (params.isHelpAsked()) {
+				AlgorithmParameters.printHelp();
+				System.exit(0);
+			}
+			Iterable<Double> signal = new SignalParser().parse(params.getInput());
+		} catch (ParseException e) {
+			AlgorithmParameters.printHelp();
+			System.exit(1);
+		}
 	}
 
 }

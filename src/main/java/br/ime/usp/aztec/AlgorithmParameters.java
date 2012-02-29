@@ -39,32 +39,20 @@ public final class AlgorithmParameters {
 	private static final double DEFAULT_T = 25; // in samples
 	private static final double DEFAULT_N = 4;
 
-	private final double t;
-	private final double k;
-	private final double n;
-	private final Reader input;
+	private final CommandLine options;
 
 	/**
 	 * @param commandLine
 	 *            Command line arguments received in main method.
+	 * @throws ParseException
+	 *             if the given arguments are invalid or neither the mandatory
+	 *             argument -K nor -h were not given
 	 */
-	public AlgorithmParameters(String[] commandLine) {
-		try {
-			CommandLineParser parser = new PosixParser();
-			CommandLine options = parser.parse(getCommandLineOptions(),
-					commandLine);
-			if (options.hasOption('h')) {
-				printHelpAndExitWithCode(0);
-			}
-			this.k = Double.parseDouble(options.getOptionValue('K'));
-			this.t = Double.parseDouble(options.getOptionValue('T',
-					String.valueOf(DEFAULT_T)));
-			this.n = Double.parseDouble(options.getOptionValue('N',
-					String.valueOf(DEFAULT_N)));
-			this.input = openInputGivenIn(options);
-		} catch (ParseException e) {
-			printHelpAndExitWithCode(1);
-			throw new RuntimeException("To keep the compiler happy");
+	public AlgorithmParameters(String[] commandLine) throws ParseException {
+		CommandLineParser parser = new PosixParser();
+		this.options = parser.parse(getCommandLineOptions(), commandLine);
+		if (!this.options.hasOption('h') && !this.options.hasOption('K')) {
+			throw new ParseException("Mandatory argument not given");
 		}
 	}
 
@@ -72,50 +60,37 @@ public final class AlgorithmParameters {
 	 * @return Minimum size of line to not be considered part of slope
 	 */
 	public double getT() {
-		return this.t;
+		return Double.parseDouble(this.options.getOptionValue('T',
+				String.valueOf(DEFAULT_T)));
 	}
 
 	/**
 	 * @return Maximum variation of voltage to be considered a line
 	 */
 	public double getK() {
-		return this.k;
+		return Double.parseDouble(this.options.getOptionValue('K'));
 	}
 
 	/**
 	 * @return Maximum length of a line
 	 */
 	public double getN() {
-		return this.n;
+		return Double.parseDouble(this.options.getOptionValue('N',
+				String.valueOf(DEFAULT_N)));
 	}
 
 	/**
 	 * @return Reader for input signal
 	 */
 	public Reader getInput() {
-		return this.input;
+		return openInputGivenIn(this.options);
 	}
 
-	private Options getCommandLineOptions() {
-		Options options = new Options();
-
-		Option optionK = new Option("K", true,
-				"Maximum variation of voltage to be considered a line");
-		optionK.setRequired(true);
-		options.addOption(optionK);
-
-		options.addOption(
-				"T",
-				true,
-				"Minimum size of line to not be considered part of slope. " +
-				"Defaults to 4 samples");
-		options.addOption("N", true,
-				"Maximum length of a line. Defaults to 25 samples");
-		options.addOption("h", false, "Prints this help and exit");
-		options.addOption("i", true,
-				"Specify a input file. " +
-				"If none specified, reads signal from standard input");
-		return options;
+	/**
+	 * @return True if -h was given
+	 */
+	public boolean isHelpAsked() {
+		return this.options.hasOption('h');
 	}
 
 	private Reader openInputGivenIn(CommandLine options) {
@@ -130,16 +105,28 @@ public final class AlgorithmParameters {
 		return new InputStreamReader(System.in);
 	}
 
-	private void printHelpAndExitWithCode(int code) {
+	private static Options getCommandLineOptions() {
+		Options options = new Options();
+
+		Option optionK = new Option("K", true,
+				"Maximum variation of voltage to be considered a line");
+		options.addOption(optionK);
+
+		options.addOption("T", true,
+				"Minimum size of line to not be considered part of slope. "
+						+ "Defaults to 4 samples");
+		options.addOption("N", true,
+				"Maximum length of a line. Defaults to 25 samples");
+		options.addOption("h", false, "Prints this help and exit");
+		options.addOption("i", true, "Specify a input file. "
+				+ "If none specified, reads signal from standard input");
+		return options;
+	}
+
+	public static void printHelp() {
 		HelpFormatter help = new HelpFormatter();
-		help.printHelp(
-				60,
-				"aztec",
-				"AZTEC algorithm encoder",
-				getCommandLineOptions(),
-				"Feel free to send any comments to " +
-				"lreal at ime dot usp dot br",
-				true);
-		System.exit(code);
+		help.printHelp(60, "aztec", "AZTEC algorithm encoder",
+				getCommandLineOptions(), "Feel free to send any comments to "
+						+ "lreal at ime dot usp dot br", true);
 	}
 }
