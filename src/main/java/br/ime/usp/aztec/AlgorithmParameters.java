@@ -15,118 +15,50 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.io.Reader;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import java.io.Writer;
 
 /**
- * Parses algorithm parameters from command line, such as voltage variation
- * threshold, and stores them.
+ * AZTEC algorithm parameters provider interface.
  *
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class AlgorithmParameters {
-
-	private static final double DEFAULT_T = 25; // in samples
-	private static final double DEFAULT_N = 4;
-
-	private final CommandLine options;
+public interface AlgorithmParameters {
 
 	/**
-	 * @param commandLine
-	 *            Command line arguments received in main method.
-	 * @throws ParseException
-	 *             if the given arguments are invalid or neither the mandatory
-	 *             argument -K nor -h were not given
+	 * Default value for the parameter T of the algorithm, in samples
+	 * @see {@link AlgorithmParameters#getT()}
 	 */
-	public AlgorithmParameters(String[] commandLine) throws ParseException {
-		CommandLineParser parser = new PosixParser();
-		this.options = parser.parse(getCommandLineOptions(), commandLine);
-		if (!this.options.hasOption('h') && !this.options.hasOption('K')) {
-			throw new ParseException("Mandatory argument not given");
-		}
-	}
+	public static final double DEFAULT_T = 4;
+
+	/**
+	 * Default value for the parameter N of the algorithm, in samples
+	 * @see {@link AlgorithmParameters#getN()}
+	 */
+	public static final double DEFAULT_N = 25;
 
 	/**
 	 * @return Minimum size of line to not be considered part of slope
 	 */
-	public double getT() {
-		return Double.parseDouble(this.options.getOptionValue('T',
-				String.valueOf(DEFAULT_T)));
-	}
+	double getT();
 
 	/**
 	 * @return Maximum variation of voltage to be considered a line
 	 */
-	public double getK() {
-		return Double.parseDouble(this.options.getOptionValue('K'));
-	}
+	double getK();
 
 	/**
 	 * @return Maximum length of a line
 	 */
-	public double getN() {
-		return Double.parseDouble(this.options.getOptionValue('N',
-				String.valueOf(DEFAULT_N)));
-	}
+	double getN();
 
 	/**
 	 * @return Reader for input signal
 	 */
-	public Reader getInput() {
-		return openInputGivenIn(this.options);
-	}
+	Reader getInput();
 
 	/**
-	 * @return True if -h was given
+	 * @return Writer for algorithm output
 	 */
-	public boolean isHelpAsked() {
-		return this.options.hasOption('h');
-	}
-
-	private Reader openInputGivenIn(CommandLine options) {
-		if (options.hasOption('i')) {
-			try {
-				return new FileReader(options.getOptionValue('i'));
-			} catch (FileNotFoundException e) {
-				System.err.println(e.getMessage());
-				System.exit(2);
-			}
-		}
-		return new InputStreamReader(System.in);
-	}
-
-	private static Options getCommandLineOptions() {
-		Options options = new Options();
-
-		Option optionK = new Option("K", true,
-				"Maximum variation of voltage to be considered a line");
-		options.addOption(optionK);
-
-		options.addOption("T", true,
-				"Minimum size of line to not be considered part of slope. "
-						+ "Defaults to 4 samples");
-		options.addOption("N", true,
-				"Maximum length of a line. Defaults to 25 samples");
-		options.addOption("h", false, "Prints this help and exit");
-		options.addOption("i", true, "Specify a input file. "
-				+ "If none specified, reads signal from standard input");
-		return options;
-	}
-
-	public static void printHelp() {
-		HelpFormatter help = new HelpFormatter();
-		help.printHelp(60, "aztec", "AZTEC algorithm encoder",
-				getCommandLineOptions(), "Feel free to send any comments to "
-						+ "lreal at ime dot usp dot br", true);
-	}
+	Writer getOutput();
 }

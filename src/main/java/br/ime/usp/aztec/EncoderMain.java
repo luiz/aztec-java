@@ -17,18 +17,22 @@ package br.ime.usp.aztec;
 
 import org.apache.commons.cli.ParseException;
 
-public final class Encoder {
+/**
+ * @author Luiz Fernando Oliveira Corte Real
+ */
+public final class EncoderMain {
 
 	public static void main(String[] args) throws Exception {
 		try {
-			AlgorithmParameters params = new AlgorithmParameters(args);
+			CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(args);
 			if (params.isHelpAsked()) {
-				AlgorithmParameters.printHelp();
+				CommandLineAlgorithmParameters.printHelp();
 				System.exit(0);
 			}
 			Iterable<Double> signal = new SignalParser().parse(params.getInput());
+			new AZTEC(params).encode(signal);
 		} catch (ParseException e) {
-			AlgorithmParameters.printHelp();
+			CommandLineAlgorithmParameters.printHelp();
 			System.exit(1);
 		}
 	}

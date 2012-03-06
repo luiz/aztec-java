@@ -15,6 +15,7 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -30,21 +31,17 @@ import org.junit.Test;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
- *
  */
-public class AlgorithmParametersTest {
-	/**
-	 *
-	 */
+public class CommandLineAlgorithmParametersTest {
 	private static final String TEST_FILE_TEXT = "test file";
-	private AlgorithmParameters filledParameters;
-	private AlgorithmParameters defaultParameters;
+	private CommandLineAlgorithmParameters filledParameters;
+	private CommandLineAlgorithmParameters defaultParameters;
 
 	@Before
 	public void setUp() throws Exception {
 		File tempFile = createTempFile();
-		this.filledParameters = new AlgorithmParameters(new String[] { "-K", "15", "-T", "3", "-N", "30", "-i", tempFile.getAbsolutePath() });
-		this.defaultParameters = new AlgorithmParameters(new String[] { "-K", "20" });
+		this.filledParameters = new CommandLineAlgorithmParameters(new String[] { "-K", "15", "-T", "3", "-N", "30", "-i", tempFile.getAbsolutePath() });
+		this.defaultParameters = new CommandLineAlgorithmParameters(new String[] { "-K", "20" });
 	}
 
 	private File createTempFile() throws IOException {
@@ -73,7 +70,7 @@ public class AlgorithmParametersTest {
 	@Test
 	public void detectsIfHelpWasAsked() throws Exception {
 		assertThat(this.filledParameters.isHelpAsked(), is(false));
-		AlgorithmParameters askedHelp = new AlgorithmParameters(new String[] { "-h" });
+		CommandLineAlgorithmParameters askedHelp = new CommandLineAlgorithmParameters(new String[] { "-h" });
 		assertThat(askedHelp.isHelpAsked(), is(true));
 	}
 
@@ -84,9 +81,18 @@ public class AlgorithmParametersTest {
 		assertThat(inputScanner.nextLine(), is(TEST_FILE_TEXT));
 	}
 
+	@Test
+	public void createsWriterForGivenOutputFile() throws Exception {
+		File tempFile = createTempFile();
+		String outputText = "abc123def456";
+		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
+		params.getOutput().append(outputText).close();
+		assertThat(new Scanner(tempFile).nextLine(), containsString(outputText));
+	}
+
 	@Test(expected = ParseException.class)
 	public void requiresMaximumVoltageVariation() throws Exception {
-		new AlgorithmParameters(new String[] {});
+		new CommandLineAlgorithmParameters(new String[] {});
 	}
 
 	@Test
