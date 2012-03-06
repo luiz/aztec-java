@@ -25,13 +25,13 @@ public interface AlgorithmParameters {
 
 	/**
 	 * Default value for the parameter T of the algorithm, in samples
-	 * @see {@link AlgorithmParameters#getT()}
+	 * @see AlgorithmParameters#getT()
 	 */
 	public static final double DEFAULT_T = 4;
 
 	/**
 	 * Default value for the parameter N of the algorithm, in samples
-	 * @see {@link AlgorithmParameters#getN()}
+	 * @see AlgorithmParameters#getN()
 	 */
 	public static final double DEFAULT_N = 25;
 

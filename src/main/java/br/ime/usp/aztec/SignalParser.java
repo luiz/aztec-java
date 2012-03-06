@@ -61,7 +61,7 @@ public final class SignalParser implements Iterable<Double> {
 
 	/**
 	 * @return An iterator for the parsed input values
-	 * @see {@link Iterator}
+	 * @see Iterator
 	 */
 	@Override
 	public Iterator<Double> iterator() {
