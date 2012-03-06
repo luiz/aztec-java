@@ -15,25 +15,34 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
-import org.apache.commons.cli.ParseException;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
+ * Writes the given values in a Writer, one per line, using Java's default
+ * double formatting.
+ *
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class EncoderMain {
+public final class WriterEncodingOutput implements EncodingOutput {
+	private final Writer writer;
 
-	public static void main(String[] args) throws Exception {
-		try {
-			CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(args);
-			if (params.isHelpAsked()) {
-				CommandLineAlgorithmParameters.printHelp();
-				System.exit(0);
-			}
-			new AZTEC(params).encode(params.getInput());
-		} catch (ParseException e) {
-			CommandLineAlgorithmParameters.printHelp();
-			System.exit(1);
-		}
+	public WriterEncodingOutput(Writer writer) {
+		this.writer = writer;
+	}
+
+	@Override
+	public void put(double value) throws IOException {
+		writer.append(Double.toString(value));
+		writer.append('\n');
+	}
+
+	/**
+	 * Closes underlying writer
+	 * @throws IOException If the underlying writer throws this exception
+	 */
+	public void close() throws IOException {
+		this.writer.close();
 	}
 
 }

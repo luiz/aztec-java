@@ -17,8 +17,6 @@ package br.ime.usp.aztec;
 
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 
 /**
  * Container for AZTEC algorithm parameters that can be created from inside the
@@ -33,8 +31,8 @@ public final class ProgrammaticAlgorithmParameters implements
 	private double t;
 	private double k;
 	private double n;
-	private Reader input;
-	private Writer output;
+	private Iterable<Double> input;
+	private EncodingOutput output;
 
 	private ProgrammaticAlgorithmParameters() {
 	}
@@ -51,11 +49,11 @@ public final class ProgrammaticAlgorithmParameters implements
 		return n;
 	}
 
-	public Reader getInput() {
+	public Iterable<Double> getInput() {
 		return input;
 	}
 
-	public Writer getOutput() {
+	public EncodingOutput getOutput() {
 		return output;
 	}
 
@@ -79,8 +77,8 @@ public final class ProgrammaticAlgorithmParameters implements
 			this.params.k = variation;
 			this.params.n = DEFAULT_N;
 			this.params.t = DEFAULT_T;
-			this.params.input = new InputStreamReader(System.in);
-			this.params.output = new OutputStreamWriter(System.out);
+			this.params.input = new SignalParser(new InputStreamReader(System.in));
+			this.params.output = new WriterEncodingOutput(new OutputStreamWriter(System.out));
 			return new OptionalParametersBuilder(params);
 		}
 	}
@@ -117,23 +115,22 @@ public final class ProgrammaticAlgorithmParameters implements
 
 		/**
 		 * @param input
-		 *            A reader for the input signal
+		 *            A signal
 		 * @return The builder
 		 * @see {@link AlgorithmParameters#getInput()}
 		 */
-		public OptionalParametersBuilder withInput(Reader input) {
+		public OptionalParametersBuilder withInput(Iterable<Double> input) {
 			this.params.input = input;
 			return this;
 		}
 
 		/**
 		 * @param output
-		 *            A writer to where the result of the algorithm should be
-		 *            written
+		 *            A processor of the algorithm output
 		 * @return The builder
 		 * @see {@link AlgorithmParameters#getOutput()}
 		 */
-		public OptionalParametersBuilder withOutput(Writer output) {
+		public OptionalParametersBuilder withOutput(EncodingOutput output) {
 			this.params.output = output;
 			return this;
 		}

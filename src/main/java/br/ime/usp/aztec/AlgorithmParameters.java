@@ -15,8 +15,6 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
-import java.io.Reader;
-import java.io.Writer;
 
 /**
  * AZTEC algorithm parameters provider interface.
@@ -53,12 +51,12 @@ public interface AlgorithmParameters {
 	double getN();
 
 	/**
-	 * @return Reader for input signal
+	 * @return Iterable with input signal values
 	 */
-	Reader getInput();
+	Iterable<Double> getInput();
 
 	/**
-	 * @return Writer for algorithm output
+	 * @return Algorithm output
 	 */
-	Writer getOutput();
+	EncodingOutput getOutput();
 }

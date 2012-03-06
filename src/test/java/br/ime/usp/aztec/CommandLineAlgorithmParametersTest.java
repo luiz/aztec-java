@@ -15,6 +15,7 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -22,7 +23,6 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Scanner;
 
 import org.apache.commons.cli.ParseException;
@@ -33,7 +33,7 @@ import org.junit.Test;
  * @author Luiz Fernando Oliveira Corte Real
  */
 public class CommandLineAlgorithmParametersTest {
-	private static final String TEST_FILE_TEXT = "test file";
+	private static final String TEST_FILE_TEXT = "1.0\n2.0\n";
 	private CommandLineAlgorithmParameters filledParameters;
 	private CommandLineAlgorithmParameters defaultParameters;
 
@@ -76,18 +76,22 @@ public class CommandLineAlgorithmParametersTest {
 
 	@Test
 	public void createsReaderFromGivenInputFile() throws Exception {
-		Reader input = this.filledParameters.getInput();
-		Scanner inputScanner = new Scanner(input);
-		assertThat(inputScanner.nextLine(), is(TEST_FILE_TEXT));
+		SignalParser input = this.filledParameters.getInput();
+		assertThat(input, contains(1.0, 2.0));
 	}
 
 	@Test
 	public void createsWriterForGivenOutputFile() throws Exception {
 		File tempFile = createTempFile();
-		String outputText = "abc123def456";
+		Double number = 3.14159;
+
 		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
-		params.getOutput().append(outputText).close();
-		assertThat(new Scanner(tempFile).nextLine(), containsString(outputText));
+		WriterEncodingOutput output = params.getOutput();
+		output.put(number);
+		output.close();
+
+		String outputLine = new Scanner(tempFile).nextLine();
+		assertThat(outputLine, containsString(number.toString()));
 	}
 
 	@Test(expected = ParseException.class)
@@ -97,11 +101,11 @@ public class CommandLineAlgorithmParametersTest {
 
 	@Test
 	public void givesDefaultMinimumLineLengthIfNoneGiven() throws Exception {
-		assertThat(this.defaultParameters.getT(), is(25.0));
+		assertThat(this.defaultParameters.getT(), is(4.0));
 	}
 
 	@Test
 	public void givesDefaultMaximumLineLengthIfNoneGiven() throws Exception {
-		assertThat(this.defaultParameters.getN(), is(4.0));
+		assertThat(this.defaultParameters.getN(), is(25.0));
 	}
 }

@@ -18,30 +18,97 @@ package br.ime.usp.aztec;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Parses a signal from a given reader
  *
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class SignalParser {
+public final class SignalParser implements Iterable<Double> {
+
+	private final Reader reader;
+	private final List<Double> readPoints = new ArrayList<Double>();
 
 	/**
 	 * @param reader
 	 *            Reader from where the signal should be read
-	 * @return An array with signal values
-	 * @throws IOException If the reader fails to read a line
 	 */
-	public Iterable<Double> parse(Reader reader) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(reader);
-		List<Double> values = new LinkedList<Double>();
-		String line = null;
-		while ((line = bufferedReader.readLine()) != null) {
-			values.add(Double.parseDouble(line));
+	public SignalParser(Reader reader) {
+		this.reader = reader;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append('[');
+		boolean hasPoints = false;
+		for (Double d : this) {
+			builder.append(d);
+			builder.append(", ");
+			hasPoints = true;
 		}
-		return values;
+		if (hasPoints) {
+			int lastPosition = builder.length() - 1;
+			builder.delete(lastPosition - 1, lastPosition);
+		}
+		builder.append(']');
+		return builder.toString();
+	}
+
+	/**
+	 * @return An iterator for the parsed input values
+	 * @see {@link Iterator}
+	 */
+	@Override
+	public Iterator<Double> iterator() {
+		return new Iterator<Double>() {
+
+			private final BufferedReader bufferedReader = new BufferedReader(reader);
+			private final int numReadPoints = readPoints.size();
+			private int usedReadPoints = 0;
+			private String nextLine;
+
+			@Override
+			public boolean hasNext() {
+				return (usedReadPoints < numReadPoints) || nextLine() != null;
+			}
+
+			@Override
+			public Double next() {
+				if (usedReadPoints < numReadPoints) {
+					return readPoints.get(usedReadPoints++);
+				}
+				try {
+					String toParse = nextLine();
+					this.nextLine = null;
+					double read = Double.parseDouble(toParse);
+					readPoints.add(read);
+					return read;
+				} catch (Exception e) {
+					throw new NoSuchElementException("Failed to read more items");
+				}
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Read-only iterator");
+			}
+
+			private String nextLine() {
+				if (this.nextLine == null) {
+					try {
+						this.nextLine = bufferedReader.readLine();
+					} catch (IOException e) {
+						this.nextLine = null;
+					}
+				}
+				return this.nextLine;
+			}
+		};
 	}
 
 }

@@ -19,23 +19,21 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import br.ime.usp.aztec.test.MockEncodingOutput;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class AZTECTest {
 	private AZTEC aztec;
-	private StringWriter mockWriter;
+	private MockEncodingOutput output;
 
 	@Before
 	public void setUp() throws Exception {
-		this.mockWriter = new StringWriter();
+		this.output = new MockEncodingOutput();
 		AlgorithmParameters params = createDefaultParameters();
 		this.aztec = new AZTEC(params);
 	}
@@ -44,18 +42,19 @@ public final class AZTECTest {
 	public void encodesALineAsALine() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.0, 1.0, 1.0);
 		this.aztec.encode(signal);
-		Iterable<Double> result = getAlgorithmOutput();
-		assertThat(result, contains(4.0, 1.0));
+		assertThat(this.output, contains(4.0, 1.0));
+	}
+
+	@Test
+	public void encodesSomethingCloseToALineAsALine() throws Exception {
+		Iterable<Double> signal = asList(1.0, 1.1, 1.1, 1.1, 1.0, 1.1);
+		this.aztec.encode(signal);
+		assertThat(this.output, contains(6.0, 1.05));
 	}
 
 	private AlgorithmParameters createDefaultParameters() {
 		return new ProgrammaticAlgorithmParameters.Builder()
 				.withMaximumAcceptableVariation(0.1)
-				.withOutput(this.mockWriter).build();
-	}
-
-	private Iterable<Double> getAlgorithmOutput() throws IOException {
-		return new SignalParser().parse(new StringReader(this.mockWriter
-				.getBuffer().toString()));
+				.withOutput(this.output).build();
 	}
 }

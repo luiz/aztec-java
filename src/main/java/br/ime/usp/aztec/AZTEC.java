@@ -16,6 +16,7 @@ limitations under the License.
 package br.ime.usp.aztec;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * The algorithm implementation
@@ -30,9 +31,31 @@ public final class AZTEC {
 		this.params = params;
 	}
 
+	/**
+	 * Encodes the given signal, writing the output to the {@link EncodingOutput} specified in the {@link AlgorithmParameters} passed on the construction of this object
+	 * @param signal Signal to be encoded
+	 * @throws IOException If the output throws it
+	 * @see {@link AlgorithmParameters}
+	 * @see {@link EncodingOutput}
+	 */
 	public void encode(Iterable<Double> signal) throws IOException {
-		params.getOutput().append("4.0\n1.0");
-		// TODO implement
+		EncodingOutput out = params.getOutput();
+		Iterator<Double> signalPoints = signal.iterator();
+		double first = signalPoints.next();
+		double max = first;
+		double min = first;
+		int length = 1;
+		while (signalPoints.hasNext()) {
+			double current = signalPoints.next();
+			if (current > max) {
+				max = current;
+			} else if (current < min) {
+				min = current;
+			}
+			length++;
+		}
+		out.put(length);
+		out.put((max + min) / 2);
 	}
 
 }

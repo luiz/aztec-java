@@ -23,13 +23,16 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
+/**
+ * @author Luiz Fernando Oliveira Corte Real
+ */
 public final class SignalParserTest {
 	@Test
 	public void readsNumbersFromReaderOnePerLineAndReturnsThemInAnArray()
 			throws Exception {
 		String signal = "1.0\n2.0\n3.0\n5.0\n8.0\n";
 		Reader reader = new StringReader(signal);
-		Iterable<Double> parsedSignal = new SignalParser().parse(reader);
+		Iterable<Double> parsedSignal = new SignalParser(reader);
 		assertThat(parsedSignal, contains(1.0, 2.0, 3.0, 5.0, 8.0));
 	}
 
@@ -38,7 +41,16 @@ public final class SignalParserTest {
 			throws Exception {
 		String signal = "1.0\n2.0\n3.0\n4.0\n5.0";
 		Reader reader = new StringReader(signal);
-		Iterable<Double> parsedSignal = new SignalParser().parse(reader);
+		Iterable<Double> parsedSignal = new SignalParser(reader);
+		assertThat(parsedSignal, contains(1.0, 2.0, 3.0, 4.0, 5.0));
+	}
+
+	@Test
+	public void createsANewIteratorEachIteration() throws Exception {
+		String signal = "1.0\n2.0\n3.0\n4.0\n5.0";
+		Reader reader = new StringReader(signal);
+		Iterable<Double> parsedSignal = new SignalParser(reader);
+		assertThat(parsedSignal, contains(1.0, 2.0, 3.0, 4.0, 5.0));
 		assertThat(parsedSignal, contains(1.0, 2.0, 3.0, 4.0, 5.0));
 	}
 }

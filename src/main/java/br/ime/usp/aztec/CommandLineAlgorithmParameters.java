@@ -56,46 +56,31 @@ public final class CommandLineAlgorithmParameters implements AlgorithmParameters
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see br.ime.usp.aztec.Algorithm#getT()
-	 */
 	@Override
 	public double getT() {
 		return Double.parseDouble(this.options.getOptionValue('T',
 				String.valueOf(DEFAULT_T)));
 	}
 
-	/* (non-Javadoc)
-	 * @see br.ime.usp.aztec.Algorithm#getK()
-	 */
 	@Override
 	public double getK() {
 		return Double.parseDouble(this.options.getOptionValue('K'));
 	}
 
-	/* (non-Javadoc)
-	 * @see br.ime.usp.aztec.Algorithm#getN()
-	 */
 	@Override
 	public double getN() {
 		return Double.parseDouble(this.options.getOptionValue('N',
 				String.valueOf(DEFAULT_N)));
 	}
 
-	/* (non-Javadoc)
-	 * @see br.ime.usp.aztec.Algorithm#getInput()
-	 */
 	@Override
-	public Reader getInput() {
-		return openInputGivenIn(this.options);
+	public SignalParser getInput() {
+		return new SignalParser(openInputGivenIn(this.options));
 	}
 
-	/* (non-Javadoc)
-	 * @see br.ime.usp.aztec.Algorithm#getOutput()
-	 */
 	@Override
-	public Writer getOutput() {
-		return openOutputGivenIn(this.options);
+	public WriterEncodingOutput getOutput() {
+		return new WriterEncodingOutput(openOutputGivenIn(this.options));
 	}
 
 	/**
