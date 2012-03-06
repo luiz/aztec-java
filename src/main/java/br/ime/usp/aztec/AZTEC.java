@@ -44,53 +44,85 @@ public final class AZTEC {
 	 * @see EncodingOutput
 	 */
 	public void encode(Iterable<Double> signal) throws IOException {
-		EncodingOutput out = params.getOutput();
 		Iterator<Double> signalPoints = signal.iterator();
-		double first = signalPoints.next();
-		double max = first;
-		double min = first;
-		int length = 1;
+		Line line = new Line(signalPoints.next());
 		Slope slope = null;
 		while (signalPoints.hasNext()) {
 			double current = signalPoints.next();
-			if (isCurrentTooFarFrom(current, min, max) || length >= params.getN()) {
-				if (length >= params.getT()) {
-					out.put(length);
-					out.put((max + min) / 2);
-				} else {
+			if (!line.canContain(current) || line.isTooLong()) {
+				if (line.isTooShort()) {
 					if (slope == null) {
 						slope = new Slope();
 					}
-					slope.update(min, max, length);
+					slope.update(line);
+				} else {
+					line.end();
 				}
-				max = current;
-				min = current;
-				length = 0;
+				line = new Line(current);
+			} else {
+				line.update(current);
 			}
+			if (!line.isTooShort() && slope != null) {
+				slope.end();
+				slope = null;
+			}
+		}
+		if (slope != null) {
+			if (line.isTooShort()) {
+				slope.update(line);
+				slope.end();
+			} else {
+				slope.end();
+				line.end();
+			}
+		} else {
+			line.end();
+		}
+	}
+
+	private class Line {
+		private double min;
+		private double max;
+		private double length;
+
+		Line(double initialValue) {
+			this.min = initialValue;
+			this.max = initialValue;
+			this.length = 1;
+		}
+
+		void update(double current) {
 			if (current > max) {
 				max = current;
 			} else if (current < min) {
 				min = current;
 			}
 			length++;
-			if (length >= params.getT() && slope != null) {
-				slope.end();
-				slope = null;
-			}
 		}
-		if (slope != null) {
-			if (length < params.getT()) {
-				slope.update(min, max, length);
-			}
-			slope.end();
-		} else {
+
+		boolean canContain(double value) {
+			return value <= min + params.getK() && params.getK() + value >= max;
+		}
+
+		boolean isTooLong() {
+			return this.length >= params.getN();
+		}
+
+		boolean isTooShort() {
+			return this.length < params.getT();
+		}
+
+		void end() throws IOException {
+			EncodingOutput out = params.getOutput();
 			out.put(length);
 			out.put((max + min) / 2);
 		}
-	}
 
-	private boolean isCurrentTooFarFrom(double current, double min, double max) {
-		return current > min + params.getK() || max > params.getK() + current;
+		@Override
+		public String toString() {
+			return "Line [min=" + min + ", max=" + max + ", length=" + length
+					+ "]";
+		}
 	}
 
 	private class Slope {
@@ -112,15 +144,21 @@ public final class AZTEC {
 			out.put(signal * (max - min));
 		}
 
-		void update(double min, double max, double length) {
-			if (max >= this.max) {
+		void update(Line line) {
+			if (line.max >= this.max) {
 				this.signal = 1.0;
 			} else {
 				this.signal = -1.0;
 			}
-			this.min = Math.min(min, this.min);
-			this.max = Math.max(max, this.max);
-			this.duration += length;
+			this.min = Math.min(line.min, this.min);
+			this.max = Math.max(line.max, this.max);
+			this.duration += line.length;
+		}
+
+		@Override
+		public String toString() {
+			return "Slope [min=" + min + ", max=" + max + ", duration="
+					+ duration + ", signal=" + signal + "]";
 		}
 	}
 
