@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Parses a signal from a given reader
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class SignalParser implements Iterable<Double> {
@@ -67,7 +67,8 @@ public final class SignalParser implements Iterable<Double> {
 	public Iterator<Double> iterator() {
 		return new Iterator<Double>() {
 
-			private final BufferedReader bufferedReader = new BufferedReader(reader);
+			private final BufferedReader bufferedReader = new BufferedReader(
+					reader);
 			private final int numReadPoints = readPoints.size();
 			private int usedReadPoints = 0;
 			private String nextLine;
@@ -89,7 +90,8 @@ public final class SignalParser implements Iterable<Double> {
 					readPoints.add(read);
 					return read;
 				} catch (Exception e) {
-					throw new NoSuchElementException("Failed to read more items");
+					throw new NoSuchElementException(
+							"Failed to read more items");
 				}
 			}
 

@@ -34,10 +34,11 @@ import org.apache.commons.cli.PosixParser;
 /**
  * Parses algorithm parameters from command line, such as voltage variation
  * threshold, and stores them.
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class CommandLineAlgorithmParameters implements AlgorithmParameters {
+public final class CommandLineAlgorithmParameters implements
+		AlgorithmParameters {
 
 	private final CommandLine options;
 
@@ -48,7 +49,8 @@ public final class CommandLineAlgorithmParameters implements AlgorithmParameters
 	 *             if the given arguments are invalid or neither the mandatory
 	 *             argument -K nor -h were not given
 	 */
-	public CommandLineAlgorithmParameters(String[] commandLine) throws ParseException {
+	public CommandLineAlgorithmParameters(String[] commandLine)
+			throws ParseException {
 		CommandLineParser parser = new PosixParser();
 		this.options = parser.parse(getCommandLineOptions(), commandLine);
 		if (!this.options.hasOption('h') && !this.options.hasOption('K')) {

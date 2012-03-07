@@ -24,7 +24,8 @@ public final class EncoderMain {
 
 	public static void main(String[] args) throws Exception {
 		try {
-			CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(args);
+			CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
+					args);
 			if (params.isHelpAsked()) {
 				CommandLineAlgorithmParameters.printHelp();
 				System.exit(0);

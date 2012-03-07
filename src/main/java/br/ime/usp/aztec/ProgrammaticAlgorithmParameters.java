@@ -21,7 +21,7 @@ import java.io.OutputStreamWriter;
 /**
  * Container for AZTEC algorithm parameters that can be created from inside the
  * program. Must be created with the Builder class inside it.
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  * @see CommandLineAlgorithmParameters
  */
@@ -37,29 +37,34 @@ public final class ProgrammaticAlgorithmParameters implements
 	private ProgrammaticAlgorithmParameters() {
 	}
 
+	@Override
 	public double getT() {
 		return t;
 	}
 
+	@Override
 	public double getK() {
 		return k;
 	}
 
+	@Override
 	public double getN() {
 		return n;
 	}
 
+	@Override
 	public Iterable<Double> getInput() {
 		return input;
 	}
 
+	@Override
 	public EncodingOutput getOutput() {
 		return output;
 	}
 
 	/**
 	 * Builder for {@link ProgrammaticAlgorithmParameters}
-	 *
+	 * 
 	 * @author Luiz Fernando Oliveira Corte Real
 	 */
 	public static final class Builder {
@@ -77,8 +82,10 @@ public final class ProgrammaticAlgorithmParameters implements
 			this.params.k = variation;
 			this.params.n = DEFAULT_N;
 			this.params.t = DEFAULT_T;
-			this.params.input = new SignalParser(new InputStreamReader(System.in));
-			this.params.output = new WriterEncodingOutput(new OutputStreamWriter(System.out));
+			this.params.input = new SignalParser(new InputStreamReader(
+					System.in));
+			this.params.output = new WriterEncodingOutput(
+					new OutputStreamWriter(System.out));
 			return new OptionalParametersBuilder(params);
 		}
 	}
@@ -138,7 +145,7 @@ public final class ProgrammaticAlgorithmParameters implements
 		/**
 		 * Call this method when you have finished the configuration of the
 		 * parameters
-		 *
+		 * 
 		 * @return A configured {@link ProgrammaticAlgorithmParameters}
 		 */
 		public ProgrammaticAlgorithmParameters build() {

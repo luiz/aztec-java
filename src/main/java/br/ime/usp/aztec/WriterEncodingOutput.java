@@ -21,7 +21,7 @@ import java.io.Writer;
 /**
  * Writes the given values in a Writer, one per line, using Java's default
  * double formatting.
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class WriterEncodingOutput implements EncodingOutput {
@@ -39,7 +39,9 @@ public final class WriterEncodingOutput implements EncodingOutput {
 
 	/**
 	 * Closes underlying writer
-	 * @throws IOException If the underlying writer throws this exception
+	 * 
+	 * @throws IOException
+	 *             If the underlying writer throws this exception
 	 */
 	public void close() throws IOException {
 		this.writer.close();

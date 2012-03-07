@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 /**
  * The algorithm implementation
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class AZTEC {
@@ -35,7 +35,7 @@ public final class AZTEC {
 	 * Encodes the given signal, writing the output to the
 	 * {@link EncodingOutput} specified in the {@link AlgorithmParameters}
 	 * passed on the construction of this object
-	 *
+	 * 
 	 * @param signal
 	 *            Signal to be encoded
 	 * @throws IOException

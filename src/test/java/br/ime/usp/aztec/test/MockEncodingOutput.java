@@ -25,7 +25,7 @@ import br.ime.usp.aztec.EncodingOutput;
 /**
  * An implementation of {@link EncodingOutput} that is also iterable, so that
  * one can inspect what values were put.
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class MockEncodingOutput implements Iterable<Double>,

@@ -40,8 +40,11 @@ public class CommandLineAlgorithmParametersTest {
 	@Before
 	public void setUp() throws Exception {
 		File tempFile = createTempFile();
-		this.filledParameters = new CommandLineAlgorithmParameters(new String[] { "-K", "15", "-T", "3", "-N", "30", "-i", tempFile.getAbsolutePath() });
-		this.defaultParameters = new CommandLineAlgorithmParameters(new String[] { "-K", "20" });
+		this.filledParameters = new CommandLineAlgorithmParameters(
+				new String[] { "-K", "15", "-T", "3", "-N", "30", "-i",
+						tempFile.getAbsolutePath() });
+		this.defaultParameters = new CommandLineAlgorithmParameters(
+				new String[] { "-K", "20" });
 	}
 
 	private File createTempFile() throws IOException {
@@ -53,7 +56,8 @@ public class CommandLineAlgorithmParametersTest {
 	}
 
 	@Test
-	public void extractsMaximumVoltageVariationFromCommandLine() throws Exception {
+	public void extractsMaximumVoltageVariationFromCommandLine()
+			throws Exception {
 		assertThat(this.filledParameters.getK(), is(15.0));
 	}
 
@@ -70,7 +74,8 @@ public class CommandLineAlgorithmParametersTest {
 	@Test
 	public void detectsIfHelpWasAsked() throws Exception {
 		assertThat(this.filledParameters.isHelpAsked(), is(false));
-		CommandLineAlgorithmParameters askedHelp = new CommandLineAlgorithmParameters(new String[] { "-h" });
+		CommandLineAlgorithmParameters askedHelp = new CommandLineAlgorithmParameters(
+				new String[] { "-h" });
 		assertThat(askedHelp.isHelpAsked(), is(true));
 	}
 
@@ -85,7 +90,8 @@ public class CommandLineAlgorithmParametersTest {
 		File tempFile = createTempFile();
 		Double number = 3.14159;
 
-		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
+		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
+				new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
 		WriterEncodingOutput output = params.getOutput();
 		output.put(number);
 		output.close();

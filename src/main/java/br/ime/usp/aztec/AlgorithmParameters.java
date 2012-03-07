@@ -15,22 +15,23 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
-
 /**
  * AZTEC algorithm parameters provider interface.
- *
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
 public interface AlgorithmParameters {
 
 	/**
 	 * Default value for the parameter T of the algorithm, in samples
+	 * 
 	 * @see AlgorithmParameters#getT()
 	 */
 	public static final double DEFAULT_T = 4;
 
 	/**
 	 * Default value for the parameter N of the algorithm, in samples
+	 * 
 	 * @see AlgorithmParameters#getN()
 	 */
 	public static final double DEFAULT_N = 25;
