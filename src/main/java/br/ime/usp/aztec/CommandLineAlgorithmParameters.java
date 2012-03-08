@@ -41,6 +41,8 @@ public final class CommandLineAlgorithmParameters implements
 		AlgorithmParameters {
 
 	private final CommandLine options;
+	private final SignalParser input;
+	private final WriterEncodingOutput output;
 
 	/**
 	 * @param commandLine
@@ -56,6 +58,9 @@ public final class CommandLineAlgorithmParameters implements
 		if (!this.options.hasOption('h') && !this.options.hasOption('K')) {
 			throw new ParseException("Mandatory argument not given");
 		}
+		this.input = new SignalParser(this.openInputGivenIn(this.options));
+		this.output = new WriterEncodingOutput(
+				this.openOutputGivenIn(this.options));
 	}
 
 	@Override
@@ -77,12 +82,12 @@ public final class CommandLineAlgorithmParameters implements
 
 	@Override
 	public SignalParser getInput() {
-		return new SignalParser(this.openInputGivenIn(this.options));
+		return this.input;
 	}
 
 	@Override
 	public WriterEncodingOutput getOutput() {
-		return new WriterEncodingOutput(this.openOutputGivenIn(this.options));
+		return this.output;
 	}
 
 	/**

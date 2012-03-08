@@ -31,6 +31,7 @@ public final class EncoderMain {
 				System.exit(0);
 			}
 			new AZTEC(params).encode(params.getInput());
+			params.getOutput().close();
 		} catch (ParseException e) {
 			CommandLineAlgorithmParameters.printHelp();
 			System.exit(1);

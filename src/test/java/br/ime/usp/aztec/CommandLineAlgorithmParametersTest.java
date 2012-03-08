@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,7 +33,7 @@ import org.junit.Test;
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public class CommandLineAlgorithmParametersTest {
+public final class CommandLineAlgorithmParametersTest {
 	private static final String TEST_FILE_TEXT = "1.0\n2.0\n";
 	private CommandLineAlgorithmParameters filledParameters;
 	private CommandLineAlgorithmParameters defaultParameters;
@@ -129,5 +130,12 @@ public class CommandLineAlgorithmParametersTest {
 		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
 				new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
 		params.getOutput();
+	}
+
+	@Test
+	public void returnsAlwaysTheSameEncodingOutput() throws Exception {
+		WriterEncodingOutput first = this.defaultParameters.getOutput();
+		WriterEncodingOutput second = this.defaultParameters.getOutput();
+		assertTrue(first == second);
 	}
 }

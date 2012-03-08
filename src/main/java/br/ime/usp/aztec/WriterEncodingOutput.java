@@ -33,8 +33,8 @@ public final class WriterEncodingOutput implements EncodingOutput {
 
 	@Override
 	public void put(double value) throws IOException {
-		writer.append(Double.toString(value));
-		writer.append('\n');
+		this.writer.write(Double.toString(value));
+		this.writer.write('\n');
 	}
 
 	/**
@@ -44,6 +44,7 @@ public final class WriterEncodingOutput implements EncodingOutput {
 	 *             If the underlying writer throws this exception
 	 */
 	public void close() throws IOException {
+		this.writer.flush();
 		this.writer.close();
 	}
 
