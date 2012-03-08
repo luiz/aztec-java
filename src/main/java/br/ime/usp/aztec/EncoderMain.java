@@ -34,7 +34,16 @@ public final class EncoderMain {
 		} catch (ParseException e) {
 			CommandLineAlgorithmParameters.printHelp();
 			System.exit(1);
+		} catch (IllegalArgumentException e) {
+			handleIOError(e);
+		} catch (ReadOnlyOutputException e) {
+			handleIOError(e);
 		}
+	}
+
+	private static void handleIOError(RuntimeException e) {
+		System.err.println(e.getMessage());
+		System.exit(2);
 	}
 
 }

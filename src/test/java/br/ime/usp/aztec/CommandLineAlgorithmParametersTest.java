@@ -39,7 +39,7 @@ public class CommandLineAlgorithmParametersTest {
 
 	@Before
 	public void setUp() throws Exception {
-		File tempFile = createTempFile();
+		File tempFile = this.createTempFile();
 		this.filledParameters = new CommandLineAlgorithmParameters(
 				new String[] { "-K", "15", "-T", "3", "-N", "30", "-i",
 						tempFile.getAbsolutePath() });
@@ -87,7 +87,7 @@ public class CommandLineAlgorithmParametersTest {
 
 	@Test
 	public void createsWriterForGivenOutputFile() throws Exception {
-		File tempFile = createTempFile();
+		File tempFile = this.createTempFile();
 		Double number = 3.14159;
 
 		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
@@ -113,5 +113,21 @@ public class CommandLineAlgorithmParametersTest {
 	@Test
 	public void givesDefaultMaximumLineLengthIfNoneGiven() throws Exception {
 		assertThat(this.defaultParameters.getN(), is(25.0));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void throwsExceptionIfInputFileGivenDoesNotExist() throws Exception {
+		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
+				new String[] { "-K", "20", "-i", "idontexist" });
+		params.getInput();
+	}
+
+	@Test(expected = ReadOnlyOutputException.class)
+	public void throwsExceptionIfOutputCannotBeOpened() throws Exception {
+		File tempFile = this.createTempFile();
+		tempFile.setReadOnly();
+		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
+				new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
+		params.getOutput();
 	}
 }

@@ -77,12 +77,12 @@ public final class CommandLineAlgorithmParameters implements
 
 	@Override
 	public SignalParser getInput() {
-		return new SignalParser(openInputGivenIn(this.options));
+		return new SignalParser(this.openInputGivenIn(this.options));
 	}
 
 	@Override
 	public WriterEncodingOutput getOutput() {
-		return new WriterEncodingOutput(openOutputGivenIn(this.options));
+		return new WriterEncodingOutput(this.openOutputGivenIn(this.options));
 	}
 
 	/**
@@ -95,11 +95,12 @@ public final class CommandLineAlgorithmParameters implements
 
 	private Reader openInputGivenIn(CommandLine options) {
 		if (options.hasOption('i')) {
+			String fileName = options.getOptionValue('i');
 			try {
-				return new FileReader(options.getOptionValue('i'));
+				return new FileReader(fileName);
 			} catch (FileNotFoundException e) {
-				System.err.println(e.getMessage());
-				System.exit(2);
+				throw new IllegalArgumentException("Input file '" + fileName
+						+ "' does not exist");
 			}
 		}
 		return new InputStreamReader(System.in);
@@ -107,11 +108,11 @@ public final class CommandLineAlgorithmParameters implements
 
 	private Writer openOutputGivenIn(CommandLine options) {
 		if (options.hasOption('o')) {
+			String fileName = options.getOptionValue('o');
 			try {
-				return new FileWriter(options.getOptionValue('o'));
+				return new FileWriter(fileName);
 			} catch (IOException e) {
-				System.err.println(e.getMessage());
-				System.exit(2);
+				throw new ReadOnlyOutputException(fileName);
 			}
 		}
 		return new OutputStreamWriter(System.out);
