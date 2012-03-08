@@ -4,7 +4,7 @@
 	<groupId>br.usp.ime</groupId>
 	<artifactId>aztec-java</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>aztec-java</name>
 
 	<properties>

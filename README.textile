@@ -1,1 +1,35 @@
-To be written...
+h1. What is this?
+
+Well, this is an ECG (electrocardiogram) compressor that uses the AZTEC algorithm, published in "this article.":http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4502549
+
+h1. How do I use it?
+
+You need to download the JAR (see "Downloads" tab above) and Apache's Common CLI JAR, version 1.2, which can be found "here.":http://repo1.maven.org/maven2/commons-cli/commons-cli/1.2/commons-cli-1.2.jar Put both the JARs in the same directory, then run
+
+<pre>
+<code>
+java -jar aztec-java-1.0.jar
+</code>
+</pre>
+
+to see a help message, which may guide you using it. Basically, you need to specify the parameter <code>-K</code>, that controls the compression level. It represents how big can be the difference between the signal and the output.
+
+Let's see an example. If you have a file with an ECG called "ecg.txt", you can just run:
+
+<pre>
+<code>
+java -jar aztec-java-1.0.jar -i ecg.txt -K 0.1
+</code>
+</pre>
+
+and the result will be printed in the console.
+
+If you want some ECG signals to test the algorithm, you can find some "here.":http://www.physionet.org/physiobank/
+
+h1. How do I build it myself?
+
+This project depends on "Maven":http://maven.apache.org/ to compile the source code, run the tests, generate documentation and the JARs. Once you have Maven installed, it should be easy to get it building.
+
+h1. Can I reuse this code?
+
+Sure! It's licensed under Apache 2.0 license, which means that you can use, modify, copy and redistribute it as you wish, as long as you maintain the license and copyright notices in the code. You can use it either as a library for your own code or as a program.
