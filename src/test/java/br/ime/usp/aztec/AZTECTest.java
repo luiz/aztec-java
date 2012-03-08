@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.ime.usp.aztec.test.MockEncodingOutput;
@@ -35,7 +34,7 @@ public final class AZTECTest {
 	@Before
 	public void setUp() throws Exception {
 		this.output = new MockEncodingOutput();
-		AlgorithmParameters params = createDefaultParameters();
+		AlgorithmParameters params = this.createDefaultParameters();
 		this.aztec = new AZTEC(params);
 	}
 
@@ -86,13 +85,19 @@ public final class AZTECTest {
 	}
 
 	@Test
-	public void encodesASmallSlopeBetweenTwoLines() throws Exception {
+	public void encodesASmallLineBetweenTwoLines() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.0, 1.1, 1.1, 1.2, 1.3, 1.4,
 				1.5, 1.5, 1.5);
 		this.aztec.encode(signal);
-		double subtractionError = 9e-17;
-		assertThat(this.output,
-				contains(4.0, 1.05, -2.0, 0.1 + subtractionError, 4.0, 1.45));
+		assertThat(this.output, contains(4.0, 1.05, 2.0, 1.25, 4.0, 1.45));
+	}
+
+	@Test
+	public void encodesASmallSlopeBetweenTwoLines() throws Exception {
+		Iterable<Double> signal = asList(1.0, 1.05, 1.0, 1.05, 1.15, 1.3, 1.4,
+				1.45, 1.5, 1.5, 1.5);
+		this.aztec.encode(signal);
+		assertThat(this.output, contains(4.0, 1.025, -3.0, 0.25, 4.0, 1.475));
 	}
 
 	@Test
@@ -104,12 +109,19 @@ public final class AZTECTest {
 	}
 
 	@Test
-	@Ignore
-	public void encodesAPositiveSlopeFollowedByANegativeSlope()
+	public void encodesAPositiveSlopeFollowedByANegativeSlopeFollowedByAPositiveSlope()
 			throws Exception {
-		Iterable<Double> signal = asList(1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0, 0.0);
+		Iterable<Double> signal = asList(1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0,
+				0.0, 0.5, 1.0, 1.5, 2.0);
 		this.aztec.encode(signal);
-		assertThat(this.output, contains(-4.0, 3.0, -4.0, -3.0));
+		assertThat(this.output, contains(-4.0, 3.0, -4.0, -3.0, -4.0, 1.5));
+	}
+
+	@Test
+	public void encodesASmallSlopeAtTheEndOfTheSignal() throws Exception {
+		Iterable<Double> signal = asList(0.0, 0.0, 0.0, 0.0, 1.0, 2.0);
+		this.aztec.encode(signal);
+		assertThat(this.output, contains(4.0, 0.0, -2.0, 1.0));
 	}
 
 	private AlgorithmParameters createDefaultParameters() {

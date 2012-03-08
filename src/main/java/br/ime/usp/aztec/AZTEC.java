@@ -16,7 +16,6 @@ limitations under the License.
 package br.ime.usp.aztec;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * The algorithm implementation
@@ -26,6 +25,7 @@ import java.util.Iterator;
 public final class AZTEC {
 
 	private final AlgorithmParameters params;
+	private State state;
 
 	public AZTEC(AlgorithmParameters params) {
 		this.params = params;
@@ -44,84 +44,211 @@ public final class AZTEC {
 	 * @see EncodingOutput
 	 */
 	public void encode(Iterable<Double> signal) throws IOException {
-		Iterator<Double> signalPoints = signal.iterator();
-		Line line = new Line(signalPoints.next());
-		Slope slope = null;
-		while (signalPoints.hasNext()) {
-			double current = signalPoints.next();
-			if (!line.canContain(current) || line.isTooLong()) {
-				if (line.isTooShort()) {
-					if (slope == null) {
-						slope = new Slope();
-					}
-					slope.update(line);
-				} else {
-					line.end();
+		this.state = new ShortLine();
+		for (Double sample : signal) {
+			this.state.process(sample);
+		}
+		this.state.finish();
+	}
+
+	private interface State {
+		void process(double sample) throws IOException;
+
+		void finish() throws IOException;
+	}
+
+	private class ShortLine implements State {
+		private final Line line = new Line();
+
+		@Override
+		public void process(double sample) throws IOException {
+			if (this.line.canContain(sample)) {
+				this.line.update(sample);
+				if (!this.line.isTooShort()) {
+					AZTEC.this.state = new NormalLine(this.line);
 				}
-				line = new Line(current);
 			} else {
-				line.update(current);
-			}
-			if (!line.isTooShort() && slope != null) {
-				slope.end();
-				slope = null;
+				AZTEC.this.state = new PossibleSlope(this.line);
+				AZTEC.this.state.process(sample);
 			}
 		}
-		if (slope != null) {
-			if (line.isTooShort()) {
-				slope.update(line);
-				slope.end();
+
+		@Override
+		public void finish() throws IOException {
+			this.line.end();
+		}
+	}
+
+	private class NormalLine implements State {
+		private final Line line;
+
+		NormalLine(Line line) {
+			this.line = line;
+		}
+
+		@Override
+		public void process(double sample) throws IOException {
+			if (this.line.canContain(sample)) {
+				this.line.update(sample);
+				if (this.line.isTooLong()) {
+					this.finish();
+					AZTEC.this.state = new ShortLine();
+				}
 			} else {
-				slope.end();
-				line.end();
+				this.finish();
+				AZTEC.this.state = new ShortLine();
+				AZTEC.this.state.process(sample);
 			}
-		} else {
-			line.end();
+		}
+
+		@Override
+		public void finish() throws IOException {
+			this.line.end();
+		}
+	}
+
+	private class PossibleSlope implements State {
+		private final Line previousLine;
+		private final Line currentLine = new Line();
+
+		PossibleSlope(Line previousLine) {
+			this.previousLine = previousLine;
+		}
+
+		@Override
+		public void process(double sample) throws IOException {
+			if (this.currentLine.canContain(sample)) {
+				this.currentLine.update(sample);
+				if (!this.currentLine.isTooShort()) {
+					this.previousLine.end();
+					AZTEC.this.state = new NormalLine(this.currentLine);
+				}
+			} else {
+				this.detectSlopeType();
+				AZTEC.this.state.process(sample);
+			}
+		}
+
+		private void detectSlopeType() {
+			int duration = this.previousLine.length + this.currentLine.length;
+			if (this.currentLine.average() > this.previousLine.average()) {
+				Slope slope = new Slope(this.previousLine.min,
+						this.currentLine.max, 1.0, duration);
+				AZTEC.this.state = new AscendingSlope(slope);
+			} else {
+				Slope slope = new Slope(this.currentLine.min,
+						this.previousLine.max, -1.0, duration);
+				AZTEC.this.state = new DescendingSlope(slope);
+			}
+		}
+
+		@Override
+		public void finish() throws IOException {
+			this.detectSlopeType();
+			AZTEC.this.state.finish();
+		}
+	}
+
+	private abstract class SlopeState implements State {
+		protected final Slope slope;
+		protected Line line;
+
+		SlopeState(Slope slope) {
+			this.slope = slope;
+			this.line = new Line();
+		}
+
+		@Override
+		public void process(double sample) throws IOException {
+			if (this.line.canContain(sample)) {
+				this.line.update(sample);
+				if (!this.line.isTooShort()) {
+					this.slope.end();
+					AZTEC.this.state = new NormalLine(this.line);
+				}
+			} else {
+				if (this.changedSignal()) {
+					this.slope.end();
+					AZTEC.this.state = new PossibleSlope(this.line);
+					AZTEC.this.state.process(sample);
+				} else {
+					this.slope.update(this.line);
+					this.line = new Line();
+					this.line.update(sample);
+				}
+			}
+		}
+
+		@Override
+		public void finish() throws IOException {
+			this.slope.update(this.line);
+			this.slope.end();
+		}
+
+		protected abstract boolean changedSignal();
+	}
+
+	private class AscendingSlope extends SlopeState {
+
+		AscendingSlope(Slope slope) {
+			super(slope);
+		}
+
+		@Override
+		protected boolean changedSignal() {
+			return this.line.average() < this.slope.max;
+		}
+	}
+
+	private class DescendingSlope extends SlopeState {
+		DescendingSlope(Slope slope) {
+			super(slope);
+		}
+
+		@Override
+		protected boolean changedSignal() {
+			return this.line.average() > this.slope.min;
 		}
 	}
 
 	private class Line {
-		private double min;
-		private double max;
-		private double length;
-
-		Line(double initialValue) {
-			this.min = initialValue;
-			this.max = initialValue;
-			this.length = 1;
-		}
+		private double min = Double.POSITIVE_INFINITY;
+		private double max = Double.NEGATIVE_INFINITY;
+		private int length = 0;
 
 		void update(double current) {
-			if (current > max) {
-				max = current;
-			} else if (current < min) {
-				min = current;
-			}
-			length++;
+			this.min = Math.min(current, this.min);
+			this.max = Math.max(current, this.max);
+			this.length++;
 		}
 
 		boolean canContain(double value) {
-			return value <= min + params.getK() && params.getK() + value >= max;
+			return value <= this.min + AZTEC.this.params.getK()
+					&& AZTEC.this.params.getK() + value >= this.max;
 		}
 
 		boolean isTooLong() {
-			return this.length >= params.getN();
+			return this.length >= AZTEC.this.params.getN();
 		}
 
 		boolean isTooShort() {
-			return this.length < params.getT();
+			return this.length < AZTEC.this.params.getT();
 		}
 
 		void end() throws IOException {
-			EncodingOutput out = params.getOutput();
-			out.put(length);
-			out.put((max + min) / 2);
+			EncodingOutput out = AZTEC.this.params.getOutput();
+			out.put(this.length);
+			out.put(this.average());
+		}
+
+		double average() {
+			return (this.max + this.min) * 0.5;
 		}
 
 		@Override
 		public String toString() {
-			return "Line [min=" + min + ", max=" + max + ", length=" + length
-					+ "]";
+			return "Line [min=" + this.min + ", max=" + this.max + ", length="
+					+ this.length + "]";
 		}
 	}
 
@@ -129,27 +256,22 @@ public final class AZTEC {
 		private double min;
 		private double max;
 		private double duration;
-		private double signal;
+		private final double signal;
 
-		Slope() {
-			this.min = Double.POSITIVE_INFINITY;
-			this.max = Double.NEGATIVE_INFINITY;
-			this.duration = 0;
-			this.signal = 0;
+		Slope(double min, double max, double signal, double duration) {
+			this.min = min;
+			this.max = max;
+			this.signal = signal;
+			this.duration = duration;
 		}
 
 		void end() throws IOException {
-			EncodingOutput out = params.getOutput();
-			out.put(-duration);
-			out.put(signal * (max - min));
+			EncodingOutput out = AZTEC.this.params.getOutput();
+			out.put(-this.duration);
+			out.put(this.signal * (this.max - this.min));
 		}
 
 		void update(Line line) {
-			if (line.max >= this.max) {
-				this.signal = 1.0;
-			} else {
-				this.signal = -1.0;
-			}
 			this.min = Math.min(line.min, this.min);
 			this.max = Math.max(line.max, this.max);
 			this.duration += line.length;
@@ -157,8 +279,9 @@ public final class AZTEC {
 
 		@Override
 		public String toString() {
-			return "Slope [min=" + min + ", max=" + max + ", duration="
-					+ duration + ", signal=" + signal + "]";
+			return "Slope [min=" + this.min + ", max=" + this.max
+					+ ", duration=" + this.duration + ", signal=" + this.signal
+					+ "]";
 		}
 	}
 
