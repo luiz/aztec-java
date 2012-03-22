@@ -15,25 +15,12 @@ limitations under the License.
  */
 package br.ime.usp.aztec.iaztec;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
+import br.ime.usp.aztec.CommandLineParametersParser;
 import br.ime.usp.aztec.iaztec.IAZTECParameters.Builder;
-import br.ime.usp.aztec.io.PleaseHelpMeException;
-import br.ime.usp.aztec.io.ReadOnlyOutputException;
 import br.ime.usp.aztec.io.SignalParser;
 import br.ime.usp.aztec.io.WriterEncodingOutput;
 
@@ -43,24 +30,11 @@ import br.ime.usp.aztec.io.WriterEncodingOutput;
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class IAZTECCommandLineParametersParser {
+public final class IAZTECCommandLineParametersParser extends
+		CommandLineParametersParser<IAZTECParameters> {
 
-	/**
-	 * @param commandLine
-	 *            Command line arguments received in main method.
-	 * @throws ParseException
-	 *             if the given arguments are invalid
-	 * @throws PleaseHelpMeException
-	 *             if the user supplied the 'h' option, wanting help
-	 */
-	public IAZTECParameters parse(String[] commandLine) throws ParseException,
-			PleaseHelpMeException {
-		CommandLineParser parser = new PosixParser();
-		CommandLine options = parser.parse(this.getCommandLineOptions(),
-				commandLine);
-		if (options.hasOption('h')) {
-			throw new PleaseHelpMeException();
-		}
+	@Override
+	protected IAZTECParameters buildParameters(CommandLine options) {
 		Builder builder = new IAZTECParameters.Builder();
 		return builder
 				.withInput(new SignalParser(this.openInputGivenIn(options)))
@@ -85,62 +59,30 @@ public final class IAZTECCommandLineParametersParser {
 				.build();
 	}
 
-	private Reader openInputGivenIn(CommandLine options) {
-		if (options.hasOption('i')) {
-			String fileName = options.getOptionValue('i');
-			try {
-				return new FileReader(fileName);
-			} catch (FileNotFoundException e) {
-				throw new IllegalArgumentException("Input file '" + fileName
-						+ "' does not exist");
-			}
-		}
-		return new InputStreamReader(System.in);
-	}
-
-	private Writer openOutputGivenIn(CommandLine options) {
-		if (options.hasOption('o')) {
-			String fileName = options.getOptionValue('o');
-			try {
-				return new FileWriter(fileName);
-			} catch (IOException e) {
-				throw new ReadOnlyOutputException(fileName);
-			}
-		}
-		return new OutputStreamWriter(System.out);
-	}
-
-	private Options getCommandLineOptions() {
-		Options options = new Options();
-
-		options.addOption("h", false, "Prints this help and exit");
-		options.addOption("i", true, "Specify a input file. "
-				+ "If none specified, reads signal from standard input");
-		options.addOption("o", true, "Specify an output file. "
-				+ "If none specified, writes encoding to standard output");
-		options.addOption("t", true,
-				"Defines the minimum value the threshold can assume. Defaults to 0.0");
-		options.addOption("T", true,
+	@Override
+	protected void addCustomCommandLineOptions(Options defaultOptions) {
+		defaultOptions
+				.addOption("t", true,
+						"Defines the minimum value the threshold can assume. Defaults to 0.0");
+		defaultOptions.addOption("T", true,
 				"Defines the maximum value the threshold can assume."
 						+ " Defaults to infinity (no limit)");
-		options.addOption(
-				"0",
-				true,
-				"Defines the initial value for the threshold."
-						+ " Must be between the minimum and the maximum values for the threshold");
-		options.addOption("1", true,
+		defaultOptions
+				.addOption(
+						"0",
+						true,
+						"Defines the initial value for the threshold."
+								+ " Must be between the minimum and the maximum values for the threshold");
+		defaultOptions.addOption("1", true,
 				"Defines the weight of the criterion function (the constant c1)."
 						+ " Defaults to 1");
-		options.addOption("2", true,
+		defaultOptions.addOption("2", true,
 				"Defines the weight of the last threshold in"
 						+ " the calculation of the new one (the constant c2)."
 						+ " Defaults to 0.08");
-		return options;
 	}
 
-	/**
-	 * Prints help message with program usage
-	 */
+	@Override
 	public void printHelp() {
 		HelpFormatter help = new HelpFormatter();
 		help.printHelp(60, "iaztec", "Improved AZTEC algorithm encoder",

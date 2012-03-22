@@ -15,55 +15,28 @@ limitations under the License.
  */
 package br.ime.usp.aztec;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
 import br.ime.usp.aztec.AZTECParameters.Builder;
-import br.ime.usp.aztec.io.PleaseHelpMeException;
-import br.ime.usp.aztec.io.ReadOnlyOutputException;
 import br.ime.usp.aztec.io.SignalParser;
 import br.ime.usp.aztec.io.WriterEncodingOutput;
 
 /**
- * Handles command-line options, such as minimum and maximum line length, and
- * prints a help message for them.
+ * Handles command-line options for the AZTEC algorithm, such as minimum and
+ * maximum line length
  * 
  * @author Luiz Fernando Oliveira Corte Real
+ * @see AZTEC
  */
-public final class AZTECCommandLineParametersParser {
+public final class AZTECCommandLineParametersParser extends
+		CommandLineParametersParser<AZTECParameters> {
 
-	/**
-	 * @param commandLine
-	 *            Command line arguments received in main method.
-	 * @throws ParseException
-	 *             if the given arguments are invalid or neither the mandatory
-	 *             argument -K nor -h were not given
-	 * @throws PleaseHelpMeException
-	 *             if the user supplied the 'h' option, wanting help
-	 */
-	public AZTECParameters parse(String[] commandLine) throws ParseException,
-			PleaseHelpMeException {
-		CommandLineParser parser = new PosixParser();
-		CommandLine options = parser.parse(this.getCommandLineOptions(),
-				commandLine);
-		if (!options.hasOption('h') && !options.hasOption('K')) {
-			throw new ParseException("Mandatory argument not given");
-		}
-		if (options.hasOption('h')) {
-			throw new PleaseHelpMeException();
+	@Override
+	protected AZTECParameters buildParameters(CommandLine options) {
+		if (!options.hasOption('K')) {
+			throw new IllegalArgumentException("Mandatory argument not given");
 		}
 		Builder builder = new AZTECParameters.Builder();
 		return builder
@@ -82,52 +55,18 @@ public final class AZTECCommandLineParametersParser {
 				.build();
 	}
 
-	private Reader openInputGivenIn(CommandLine options) {
-		if (options.hasOption('i')) {
-			String fileName = options.getOptionValue('i');
-			try {
-				return new FileReader(fileName);
-			} catch (FileNotFoundException e) {
-				throw new IllegalArgumentException("Input file '" + fileName
-						+ "' does not exist");
-			}
-		}
-		return new InputStreamReader(System.in);
-	}
-
-	private Writer openOutputGivenIn(CommandLine options) {
-		if (options.hasOption('o')) {
-			String fileName = options.getOptionValue('o');
-			try {
-				return new FileWriter(fileName);
-			} catch (IOException e) {
-				throw new ReadOnlyOutputException(fileName);
-			}
-		}
-		return new OutputStreamWriter(System.out);
-	}
-
-	private Options getCommandLineOptions() {
-		Options options = new Options();
-
-		options.addOption("K", true,
+	@Override
+	protected void addCustomCommandLineOptions(Options defaultOptions) {
+		defaultOptions.addOption("K", true,
 				"Maximum variation of voltage to be considered a line");
-		options.addOption("T", true,
+		defaultOptions.addOption("T", true,
 				"Minimum size of line to not be considered part of slope. "
 						+ "Defaults to 4 samples");
-		options.addOption("N", true,
+		defaultOptions.addOption("N", true,
 				"Maximum length of a line. Defaults to 25 samples");
-		options.addOption("h", false, "Prints this help and exit");
-		options.addOption("i", true, "Specify a input file. "
-				+ "If none specified, reads signal from standard input");
-		options.addOption("o", true, "Specify an output file. "
-				+ "If none specified, writes encoding to standard output");
-		return options;
 	}
 
-	/**
-	 * Prints help message with program usage
-	 */
+	@Override
 	public void printHelp() {
 		HelpFormatter help = new HelpFormatter();
 		help.printHelp(60, "aztec", "AZTEC algorithm encoder",

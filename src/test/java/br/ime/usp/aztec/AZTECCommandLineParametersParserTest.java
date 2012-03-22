@@ -25,7 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -102,7 +101,7 @@ public final class AZTECCommandLineParametersParserTest {
 		assertThat(outputLine, containsString(number.toString()));
 	}
 
-	@Test(expected = ParseException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void requiresMaximumVoltageVariationOrHelpFlag() throws Exception {
 		this.parser.parse(new String[] {});
 	}
