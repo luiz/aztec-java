@@ -13,22 +13,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec;
+package br.ime.usp.aztec.io;
+
+import br.ime.usp.aztec.AZTECCommandLineParametersParser;
 
 /**
+ * Thrown by {@link AZTECCommandLineParametersParser} if the user needs help to
+ * operate the program.
+ * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class ReadOnlyOutputException extends RuntimeException {
-
-	private static final long serialVersionUID = 3365951902774370465L;
+public class PleaseHelpMeException extends Exception {
+	private static final long serialVersionUID = -8551139424413834443L;
 
 	/**
-	 * @param fileName
-	 *            Path to the file that should have write permissions but does
-	 *            not
+	 * Initializes the exception with a funny message
 	 */
-	public ReadOnlyOutputException(String fileName) {
-		super("Output file '" + fileName + "' cannot be written");
+	public PleaseHelpMeException() {
+		// this should appear to the user only if we don't handle this exception
+		super("Y U NO give me help?");
 	}
-
 }

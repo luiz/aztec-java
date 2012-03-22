@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import br.ime.usp.aztec.EncodingOutput;
+import br.ime.usp.aztec.io.EncodingOutput;
 
 /**
  * An implementation of {@link EncodingOutput} that is also iterable, so that

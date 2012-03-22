@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec;
+package br.ime.usp.aztec.iaztec;
 
 import org.apache.commons.cli.ParseException;
 
@@ -21,17 +21,17 @@ import br.ime.usp.aztec.io.PleaseHelpMeException;
 import br.ime.usp.aztec.io.ReadOnlyOutputException;
 
 /**
- * Entry point for the AZTEC algorithm encoder
+ * Entry point for the improved AZTEC algorithm encoder
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class AZTECMain {
+public final class IAZTECMain {
 
 	public static void main(String[] args) throws Exception {
-		AZTECCommandLineParametersParser parser = new AZTECCommandLineParametersParser();
+		IAZTECCommandLineParametersParser parser = new IAZTECCommandLineParametersParser();
 		try {
-			AZTECParameters params = parser.parse(args);
-			new AZTEC(params).encode(params.getInput());
+			IAZTECParameters params = parser.parse(args);
+			// new IAZTEC(params).encode(params.getInput());
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();

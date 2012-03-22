@@ -17,6 +17,8 @@ package br.ime.usp.aztec;
 
 import java.io.IOException;
 
+import br.ime.usp.aztec.io.EncodingOutput;
+
 /**
  * The algorithm implementation
  * 

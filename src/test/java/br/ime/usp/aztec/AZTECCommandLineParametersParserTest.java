@@ -29,14 +29,18 @@ import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.ime.usp.aztec.io.EncodingOutput;
+import br.ime.usp.aztec.io.PleaseHelpMeException;
+import br.ime.usp.aztec.io.ReadOnlyOutputException;
+
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class CommandLineParametersParserTest {
+public final class AZTECCommandLineParametersParserTest {
 	private static final String TEST_FILE_TEXT = "1.0\n2.0\n";
 	private String[] filledParameters;
 	private String[] defaultParameters;
-	private CommandLineParametersParser parser;
+	private AZTECCommandLineParametersParser parser;
 
 	@Before
 	public void setUp() throws Exception {
@@ -44,7 +48,7 @@ public final class CommandLineParametersParserTest {
 		this.filledParameters = new String[] { "-K", "15", "-T", "3", "-N",
 				"30", "-i", tempFile.getAbsolutePath() };
 		this.defaultParameters = new String[] { "-K", "20" };
-		this.parser = new CommandLineParametersParser();
+		this.parser = new AZTECCommandLineParametersParser();
 	}
 
 	private File createTempFile() throws IOException {

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec;
+package br.ime.usp.aztec.io;
 
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
@@ -22,6 +22,8 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import org.junit.Test;
+
+import br.ime.usp.aztec.io.SignalParser;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
