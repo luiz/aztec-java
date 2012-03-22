@@ -24,23 +24,23 @@ import java.io.IOException;
  */
 public final class AZTEC {
 
-	private final AlgorithmParameters params;
+	private final AZTECParameters params;
 	private State state;
 
-	public AZTEC(AlgorithmParameters params) {
+	public AZTEC(AZTECParameters params) {
 		this.params = params;
 	}
 
 	/**
 	 * Encodes the given signal, writing the output to the
-	 * {@link EncodingOutput} specified in the {@link AlgorithmParameters}
-	 * passed on the construction of this object
+	 * {@link EncodingOutput} specified in the {@link AZTECParameters} passed on
+	 * the construction of this object
 	 * 
 	 * @param signal
 	 *            Signal to be encoded
 	 * @throws IOException
 	 *             If the output throws it
-	 * @see AlgorithmParameters
+	 * @see AZTECParameters
 	 * @see EncodingOutput
 	 */
 	public void encode(Iterable<Double> signal) throws IOException {

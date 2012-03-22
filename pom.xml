@@ -4,7 +4,7 @@
 	<groupId>br.usp.ime</groupId>
 	<artifactId>aztec-java</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>2.0-SNAPSHOT</version>
 	<name>aztec-java</name>
 
 	<properties>
@@ -100,32 +100,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<mainClass>br.ime.usp.aztec.EncoderMain</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.1</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>br.ime.usp.aztec.EncoderMain</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

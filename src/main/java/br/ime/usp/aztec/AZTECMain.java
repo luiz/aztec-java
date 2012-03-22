@@ -20,20 +20,18 @@ import org.apache.commons.cli.ParseException;
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class EncoderMain {
+public final class AZTECMain {
 
 	public static void main(String[] args) throws Exception {
+		CommandLineParametersParser parser = new CommandLineParametersParser();
 		try {
-			CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
-					args);
-			if (params.isHelpAsked()) {
-				CommandLineAlgorithmParameters.printHelp();
-				System.exit(0);
-			}
+			AZTECParameters params = parser.parse(args);
 			new AZTEC(params).encode(params.getInput());
 			params.getOutput().close();
+		} catch (PleaseHelpMeException e) {
+			parser.printHelp();
 		} catch (ParseException e) {
-			CommandLineAlgorithmParameters.printHelp();
+			parser.printHelp();
 			System.exit(1);
 		} catch (IllegalArgumentException e) {
 			handleIOError(e);

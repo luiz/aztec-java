@@ -48,4 +48,9 @@ public final class MockEncodingOutput implements Iterable<Double>,
 		return this.values.toString();
 	}
 
+	@Override
+	public void close() throws IOException {
+		// does nothing
+	}
+
 }

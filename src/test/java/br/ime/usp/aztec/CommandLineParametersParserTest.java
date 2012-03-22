@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -33,19 +32,19 @@ import org.junit.Test;
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class CommandLineAlgorithmParametersTest {
+public final class CommandLineParametersParserTest {
 	private static final String TEST_FILE_TEXT = "1.0\n2.0\n";
-	private CommandLineAlgorithmParameters filledParameters;
-	private CommandLineAlgorithmParameters defaultParameters;
+	private String[] filledParameters;
+	private String[] defaultParameters;
+	private CommandLineParametersParser parser;
 
 	@Before
 	public void setUp() throws Exception {
 		File tempFile = this.createTempFile();
-		this.filledParameters = new CommandLineAlgorithmParameters(
-				new String[] { "-K", "15", "-T", "3", "-N", "30", "-i",
-						tempFile.getAbsolutePath() });
-		this.defaultParameters = new CommandLineAlgorithmParameters(
-				new String[] { "-K", "20" });
+		this.filledParameters = new String[] { "-K", "15", "-T", "3", "-N",
+				"30", "-i", tempFile.getAbsolutePath() };
+		this.defaultParameters = new String[] { "-K", "20" };
+		this.parser = new CommandLineParametersParser();
 	}
 
 	private File createTempFile() throws IOException {
@@ -59,30 +58,28 @@ public final class CommandLineAlgorithmParametersTest {
 	@Test
 	public void extractsMaximumVoltageVariationFromCommandLine()
 			throws Exception {
-		assertThat(this.filledParameters.getK(), is(15.0));
+		assertThat(this.parser.parse(this.filledParameters).getK(), is(15.0));
 	}
 
 	@Test
 	public void extractsMinimumLineLengthFromCommandLine() throws Exception {
-		assertThat(this.filledParameters.getT(), is(3.0));
+		assertThat(this.parser.parse(this.filledParameters).getT(), is(3.0));
 	}
 
 	@Test
 	public void extractsMaximumLineLengthFromCommandLine() throws Exception {
-		assertThat(this.filledParameters.getN(), is(30.0));
+		assertThat(this.parser.parse(this.filledParameters).getN(), is(30.0));
 	}
 
-	@Test
-	public void detectsIfHelpWasAsked() throws Exception {
-		assertThat(this.filledParameters.isHelpAsked(), is(false));
-		CommandLineAlgorithmParameters askedHelp = new CommandLineAlgorithmParameters(
-				new String[] { "-h" });
-		assertThat(askedHelp.isHelpAsked(), is(true));
+	@Test(expected = PleaseHelpMeException.class)
+	public void throwsHelpWantedExceptionIfHelpFlagIsPresent() throws Exception {
+		this.parser.parse(new String[] { "-h" });
 	}
 
 	@Test
 	public void createsReaderFromGivenInputFile() throws Exception {
-		SignalParser input = this.filledParameters.getInput();
+		Iterable<Double> input = this.parser.parse(this.filledParameters)
+				.getInput();
 		assertThat(input, contains(1.0, 2.0));
 	}
 
@@ -91,9 +88,9 @@ public final class CommandLineAlgorithmParametersTest {
 		File tempFile = this.createTempFile();
 		Double number = 3.14159;
 
-		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
-				new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
-		WriterEncodingOutput output = params.getOutput();
+		AZTECParameters params = this.parser.parse(new String[] { "-K", "20",
+				"-o", tempFile.getAbsolutePath() });
+		EncodingOutput output = params.getOutput();
 		output.put(number);
 		output.close();
 
@@ -102,24 +99,24 @@ public final class CommandLineAlgorithmParametersTest {
 	}
 
 	@Test(expected = ParseException.class)
-	public void requiresMaximumVoltageVariation() throws Exception {
-		new CommandLineAlgorithmParameters(new String[] {});
+	public void requiresMaximumVoltageVariationOrHelpFlag() throws Exception {
+		this.parser.parse(new String[] {});
 	}
 
 	@Test
 	public void givesDefaultMinimumLineLengthIfNoneGiven() throws Exception {
-		assertThat(this.defaultParameters.getT(), is(4.0));
+		assertThat(this.parser.parse(this.defaultParameters).getT(), is(4.0));
 	}
 
 	@Test
 	public void givesDefaultMaximumLineLengthIfNoneGiven() throws Exception {
-		assertThat(this.defaultParameters.getN(), is(25.0));
+		assertThat(this.parser.parse(this.defaultParameters).getN(), is(25.0));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void throwsExceptionIfInputFileGivenDoesNotExist() throws Exception {
-		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
-				new String[] { "-K", "20", "-i", "idontexist" });
+		AZTECParameters params = this.parser.parse(new String[] { "-K", "20",
+				"-i", "idontexist" });
 		params.getInput();
 	}
 
@@ -127,15 +124,8 @@ public final class CommandLineAlgorithmParametersTest {
 	public void throwsExceptionIfOutputCannotBeOpened() throws Exception {
 		File tempFile = this.createTempFile();
 		tempFile.setReadOnly();
-		CommandLineAlgorithmParameters params = new CommandLineAlgorithmParameters(
-				new String[] { "-K", "20", "-o", tempFile.getAbsolutePath() });
+		AZTECParameters params = this.parser.parse(new String[] { "-K", "20",
+				"-o", tempFile.getAbsolutePath() });
 		params.getOutput();
-	}
-
-	@Test
-	public void returnsAlwaysTheSameEncodingOutput() throws Exception {
-		WriterEncodingOutput first = this.defaultParameters.getOutput();
-		WriterEncodingOutput second = this.defaultParameters.getOutput();
-		assertTrue(first == second);
 	}
 }

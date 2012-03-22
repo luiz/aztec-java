@@ -31,18 +31,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import br.ime.usp.aztec.AZTECParameters.Builder;
+
 /**
- * Parses algorithm parameters from command line, such as voltage variation
- * threshold, and stores them.
+ * Handles command-line options, such as minimum and maximum line length, and
+ * prints a help message for them.
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class CommandLineAlgorithmParameters implements
-		AlgorithmParameters {
-
-	private final CommandLine options;
-	private final SignalParser input;
-	private final WriterEncodingOutput output;
+public final class CommandLineParametersParser {
 
 	/**
 	 * @param commandLine
@@ -50,52 +47,35 @@ public final class CommandLineAlgorithmParameters implements
 	 * @throws ParseException
 	 *             if the given arguments are invalid or neither the mandatory
 	 *             argument -K nor -h were not given
+	 * @throws PleaseHelpMeException
+	 *             if the user supplied the 'h' option, wanting help
 	 */
-	public CommandLineAlgorithmParameters(String[] commandLine)
-			throws ParseException {
+	public AZTECParameters parse(String[] commandLine) throws ParseException,
+			PleaseHelpMeException {
 		CommandLineParser parser = new PosixParser();
-		this.options = parser.parse(getCommandLineOptions(), commandLine);
-		if (!this.options.hasOption('h') && !this.options.hasOption('K')) {
+		CommandLine options = parser.parse(this.getCommandLineOptions(),
+				commandLine);
+		if (!options.hasOption('h') && !options.hasOption('K')) {
 			throw new ParseException("Mandatory argument not given");
 		}
-		this.input = new SignalParser(this.openInputGivenIn(this.options));
-		this.output = new WriterEncodingOutput(
-				this.openOutputGivenIn(this.options));
-	}
-
-	@Override
-	public double getT() {
-		return Double.parseDouble(this.options.getOptionValue('T',
-				String.valueOf(DEFAULT_T)));
-	}
-
-	@Override
-	public double getK() {
-		return Double.parseDouble(this.options.getOptionValue('K'));
-	}
-
-	@Override
-	public double getN() {
-		return Double.parseDouble(this.options.getOptionValue('N',
-				String.valueOf(DEFAULT_N)));
-	}
-
-	@Override
-	public SignalParser getInput() {
-		return this.input;
-	}
-
-	@Override
-	public WriterEncodingOutput getOutput() {
-		return this.output;
-	}
-
-	/**
-	 * @return True if -h option was given at the command line and the help
-	 *         message should be printed
-	 */
-	public boolean isHelpAsked() {
-		return this.options.hasOption('h');
+		if (options.hasOption('h')) {
+			throw new PleaseHelpMeException();
+		}
+		Builder builder = new AZTECParameters.Builder();
+		return builder
+				.withMaximumAcceptableVariation(
+						Double.parseDouble(options.getOptionValue('K')))
+				.withInput(new SignalParser(this.openInputGivenIn(options)))
+				.withOutput(
+						new WriterEncodingOutput(this
+								.openOutputGivenIn(options)))
+				.withMaximumSlopeLineSize(
+						Double.parseDouble(options.getOptionValue('T',
+								String.valueOf(AZTECParameters.DEFAULT_T))))
+				.withMaximumLineLength(
+						Double.parseDouble(options.getOptionValue('N',
+								String.valueOf(AZTECParameters.DEFAULT_N))))
+				.build();
 	}
 
 	private Reader openInputGivenIn(CommandLine options) {
@@ -123,7 +103,7 @@ public final class CommandLineAlgorithmParameters implements
 		return new OutputStreamWriter(System.out);
 	}
 
-	private static Options getCommandLineOptions() {
+	private Options getCommandLineOptions() {
 		Options options = new Options();
 
 		options.addOption("K", true,
@@ -144,10 +124,11 @@ public final class CommandLineAlgorithmParameters implements
 	/**
 	 * Prints help message with program usage
 	 */
-	public static void printHelp() {
+	public void printHelp() {
 		HelpFormatter help = new HelpFormatter();
 		help.printHelp(60, "aztec", "AZTEC algorithm encoder",
-				getCommandLineOptions(), "Feel free to send any comments to "
+				this.getCommandLineOptions(),
+				"Feel free to send any comments to "
 						+ "lreal at ime dot usp dot br", true);
 	}
 }

@@ -34,7 +34,7 @@ public final class AZTECTest {
 	@Before
 	public void setUp() throws Exception {
 		this.output = new MockEncodingOutput();
-		AlgorithmParameters params = this.createDefaultParameters();
+		AZTECParameters params = this.createDefaultParameters();
 		this.aztec = new AZTEC(params);
 	}
 
@@ -124,8 +124,8 @@ public final class AZTECTest {
 		assertThat(this.output, contains(4.0, 0.0, -2.0, 1.0));
 	}
 
-	private AlgorithmParameters createDefaultParameters() {
-		return new ProgrammaticAlgorithmParameters.Builder()
+	private AZTECParameters createDefaultParameters() {
+		return new AZTECParameters.Builder()
 				.withMaximumAcceptableVariation(0.1)
 				.withMaximumLineLength(10.0).withOutput(this.output).build();
 	}

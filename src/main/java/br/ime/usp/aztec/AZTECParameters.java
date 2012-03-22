@@ -19,14 +19,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
- * Container for AZTEC algorithm parameters that can be created from inside the
- * program. Must be created with the Builder class inside it.
+ * Container for AZTEC algorithm parameters. Must be created with the Builder
+ * class inside it.
  * 
  * @author Luiz Fernando Oliveira Corte Real
- * @see CommandLineAlgorithmParameters
+ * @see CommandLineParametersParser
  */
-public final class ProgrammaticAlgorithmParameters implements
-		AlgorithmParameters {
+public final class AZTECParameters {
+
+	/**
+	 * Default value for the parameter T of the algorithm, in samples
+	 */
+	public static final double DEFAULT_T = 4;
+
+	/**
+	 * Default value for the parameter N of the algorithm, in samples
+	 */
+	public static final double DEFAULT_N = 25;
 
 	private double t;
 	private double k;
@@ -34,41 +43,51 @@ public final class ProgrammaticAlgorithmParameters implements
 	private Iterable<Double> input;
 	private EncodingOutput output;
 
-	private ProgrammaticAlgorithmParameters() {
-	}
-
-	@Override
-	public double getT() {
-		return t;
-	}
-
-	@Override
-	public double getK() {
-		return k;
-	}
-
-	@Override
-	public double getN() {
-		return n;
-	}
-
-	@Override
-	public Iterable<Double> getInput() {
-		return input;
-	}
-
-	@Override
-	public EncodingOutput getOutput() {
-		return output;
+	private AZTECParameters() {
 	}
 
 	/**
-	 * Builder for {@link ProgrammaticAlgorithmParameters}
+	 * @return Minimum size of line to not be considered part of slope
+	 */
+	public double getT() {
+		return this.t;
+	}
+
+	/**
+	 * @return Maximum variation of voltage to be considered a line
+	 */
+	public double getK() {
+		return this.k;
+	}
+
+	/**
+	 * @return Maximum length of a line
+	 */
+	public double getN() {
+		return this.n;
+	}
+
+	/**
+	 * @return Iterable with input signal values
+	 */
+	public Iterable<Double> getInput() {
+		return this.input;
+	}
+
+	/**
+	 * @return Algorithm output
+	 */
+	public EncodingOutput getOutput() {
+		return this.output;
+	}
+
+	/**
+	 * Builder for {@link AZTECParameters}
 	 * 
 	 * @author Luiz Fernando Oliveira Corte Real
 	 */
 	public static final class Builder {
-		private final ProgrammaticAlgorithmParameters params = new ProgrammaticAlgorithmParameters();
+		private final AZTECParameters params = new AZTECParameters();
 
 		/**
 		 * @param variation
@@ -86,14 +105,14 @@ public final class ProgrammaticAlgorithmParameters implements
 					System.in));
 			this.params.output = new WriterEncodingOutput(
 					new OutputStreamWriter(System.out));
-			return new OptionalParametersBuilder(params);
+			return new OptionalParametersBuilder(this.params);
 		}
 	}
 
 	public static final class OptionalParametersBuilder {
-		private final ProgrammaticAlgorithmParameters params;
+		private final AZTECParameters params;
 
-		private OptionalParametersBuilder(ProgrammaticAlgorithmParameters params) {
+		private OptionalParametersBuilder(AZTECParameters params) {
 			this.params = params;
 		}
 
@@ -146,9 +165,9 @@ public final class ProgrammaticAlgorithmParameters implements
 		 * Call this method when you have finished the configuration of the
 		 * parameters
 		 * 
-		 * @return A configured {@link ProgrammaticAlgorithmParameters}
+		 * @return A configured {@link AZTECParameters}
 		 */
-		public ProgrammaticAlgorithmParameters build() {
+		public AZTECParameters build() {
 			return this.params;
 		}
 	}
