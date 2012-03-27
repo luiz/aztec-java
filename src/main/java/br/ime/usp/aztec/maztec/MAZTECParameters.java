@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec.iaztec;
+package br.ime.usp.aztec.maztec;
 
 import br.ime.usp.aztec.AZTECCommandLineParametersParser;
 import br.ime.usp.aztec.io.EncodingOutput;
@@ -25,7 +25,7 @@ import br.ime.usp.aztec.io.EncodingOutput;
  * @author Luiz Fernando Oliveira Corte Real
  * @see AZTECCommandLineParametersParser
  */
-public final class IAZTECParameters {
+public final class MAZTECParameters {
 
 	/**
 	 * Default value for the weight of the criterion function
@@ -60,7 +60,7 @@ public final class IAZTECParameters {
 	private Iterable<Double> input;
 	private EncodingOutput output;
 
-	private IAZTECParameters() {
+	private MAZTECParameters() {
 	}
 
 	/**
@@ -113,18 +113,18 @@ public final class IAZTECParameters {
 	}
 
 	/**
-	 * Builder for {@link IAZTECParameters}
+	 * Builder for {@link MAZTECParameters}
 	 * 
 	 * @author Luiz Fernando Oliveira Corte Real
 	 */
 	public static final class Builder {
-		private final IAZTECParameters params = new IAZTECParameters();
+		private final MAZTECParameters params = new MAZTECParameters();
 
 		/**
 		 * @param c1
 		 *            The weight of the criterion function (the c1 constant)
 		 * @return The builder
-		 * @see IAZTECParameters#getC1()
+		 * @see MAZTECParameters#getC1()
 		 */
 		public Builder withCriterionFunctionWeight(double c1) {
 			this.params.c1 = c1;
@@ -135,7 +135,7 @@ public final class IAZTECParameters {
 		 * @param c2
 		 *            The last threshold weight (the c2 constant)
 		 * @return The builder
-		 * @see IAZTECParameters#getC2()
+		 * @see MAZTECParameters#getC2()
 		 */
 		public Builder withLastThresholdWeight(double c2) {
 			this.params.c2 = c2;
@@ -146,7 +146,7 @@ public final class IAZTECParameters {
 		 * @param tMin
 		 *            The minimum value the threshold can assume
 		 * @return The builder
-		 * @see IAZTECParameters#getTMin()
+		 * @see MAZTECParameters#getTMin()
 		 */
 		public Builder withMinimumThreshold(double tMin) {
 			this.params.tMin = tMin;
@@ -157,7 +157,7 @@ public final class IAZTECParameters {
 		 * @param tMax
 		 *            The maximum value the threshold can assume
 		 * @return The builder
-		 * @see IAZTECParameters#getTMax()
+		 * @see MAZTECParameters#getTMax()
 		 */
 		public Builder withMaximumThreshold(double tMax) {
 			this.params.tMax = tMax;
@@ -168,7 +168,7 @@ public final class IAZTECParameters {
 		 * @param initialT
 		 *            The initial value for the threshold
 		 * @return The builder
-		 * @see IAZTECParameters#getInitialT()
+		 * @see MAZTECParameters#getInitialT()
 		 */
 		public Builder withInitialThreshold(double initialT) {
 			this.params.initialT = initialT;
@@ -179,7 +179,7 @@ public final class IAZTECParameters {
 		 * @param input
 		 *            A signal
 		 * @return The builder
-		 * @see IAZTECParameters#getInput()
+		 * @see MAZTECParameters#getInput()
 		 */
 		public Builder withInput(Iterable<Double> input) {
 			this.params.input = input;
@@ -190,7 +190,7 @@ public final class IAZTECParameters {
 		 * @param output
 		 *            A processor of the algorithm output
 		 * @return The builder
-		 * @see IAZTECParameters#getOutput()
+		 * @see MAZTECParameters#getOutput()
 		 */
 		public Builder withOutput(EncodingOutput output) {
 			this.params.output = output;
@@ -201,9 +201,9 @@ public final class IAZTECParameters {
 		 * Call this method when you have finished the configuration of the
 		 * parameters
 		 * 
-		 * @return A configured {@link IAZTECParameters}
+		 * @return A configured {@link MAZTECParameters}
 		 */
-		public IAZTECParameters build() {
+		public MAZTECParameters build() {
 			return this.params;
 		}
 	}

@@ -30,9 +30,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import br.ime.usp.aztec.iaztec.IAZTECCommandLineParametersParser;
 import br.ime.usp.aztec.io.PleaseHelpMeException;
 import br.ime.usp.aztec.io.ReadOnlyOutputException;
+import br.ime.usp.aztec.maztec.MAZTECCommandLineParametersParser;
 
 /**
  * Superclass of the command line parser for each algorithm, providing default
@@ -43,7 +43,7 @@ import br.ime.usp.aztec.io.ReadOnlyOutputException;
  *            Type of the parameters object that will be generated
  * @author Luiz Fernando Oliveira Corte Real
  * @see AZTECCommandLineParametersParser
- * @see IAZTECCommandLineParametersParser
+ * @see MAZTECCommandLineParametersParser
  */
 public abstract class CommandLineParametersParser<T> {
 

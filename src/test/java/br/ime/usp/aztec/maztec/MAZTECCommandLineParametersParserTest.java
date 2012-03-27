@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec.iaztec;
+package br.ime.usp.aztec.maztec;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
@@ -28,20 +28,20 @@ import java.util.Scanner;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ime.usp.aztec.iaztec.IAZTECCommandLineParametersParser;
-import br.ime.usp.aztec.iaztec.IAZTECParameters;
 import br.ime.usp.aztec.io.EncodingOutput;
 import br.ime.usp.aztec.io.PleaseHelpMeException;
 import br.ime.usp.aztec.io.ReadOnlyOutputException;
+import br.ime.usp.aztec.maztec.MAZTECCommandLineParametersParser;
+import br.ime.usp.aztec.maztec.MAZTECParameters;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class IAZTECCommandLineParametersParserTest {
+public final class MAZTECCommandLineParametersParserTest {
 	private static final String TEST_FILE_TEXT = "1.0\n2.0\n";
 	private String[] filledParameters;
 	private String[] defaultParameters;
-	private IAZTECCommandLineParametersParser parser;
+	private MAZTECCommandLineParametersParser parser;
 
 	@Before
 	public void setUp() throws Exception {
@@ -49,7 +49,7 @@ public final class IAZTECCommandLineParametersParserTest {
 		this.filledParameters = new String[] { "-t", "0.1", "-T", "1", "-0",
 				"0.5", "-1", "2", "-2", "0.2", "-i", tempFile.getAbsolutePath() };
 		this.defaultParameters = new String[0];
-		this.parser = new IAZTECCommandLineParametersParser();
+		this.parser = new MAZTECCommandLineParametersParser();
 	}
 
 	private File createTempFile() throws IOException {
@@ -105,7 +105,7 @@ public final class IAZTECCommandLineParametersParserTest {
 		File tempFile = this.createTempFile();
 		Double number = 3.14159;
 
-		IAZTECParameters params = this.parser.parse(new String[] { "-o",
+		MAZTECParameters params = this.parser.parse(new String[] { "-o",
 				tempFile.getAbsolutePath() });
 		EncodingOutput output = params.getOutput();
 		output.put(number);
@@ -118,37 +118,37 @@ public final class IAZTECCommandLineParametersParserTest {
 	@Test
 	public void givesDefaultMinimumThresholdValueIfNoneGiven() throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getTMin(),
-				is(IAZTECParameters.DEFAULT_T_MIN));
+				is(MAZTECParameters.DEFAULT_T_MIN));
 	}
 
 	@Test
 	public void givesDefaultMaximumThresholdValueIfNoneGiven() throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getTMax(),
-				is(IAZTECParameters.DEFAULT_T_MAX));
+				is(MAZTECParameters.DEFAULT_T_MAX));
 	}
 
 	@Test
 	public void givesDefaultInitialThresholdValueIfNoneGiven() throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getInitialT(),
-				is(IAZTECParameters.DEFAULT_INITIAL_T));
+				is(MAZTECParameters.DEFAULT_INITIAL_T));
 	}
 
 	@Test
 	public void givesDefaultCriterionFunctionWeightIfNoneGiven()
 			throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getC1(),
-				is(IAZTECParameters.DEFAULT_C1));
+				is(MAZTECParameters.DEFAULT_C1));
 	}
 
 	@Test
 	public void givesDefaultLastThresholdWeightIfNoneGiven() throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getC2(),
-				is(IAZTECParameters.DEFAULT_C2));
+				is(MAZTECParameters.DEFAULT_C2));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void throwsExceptionIfInputFileGivenDoesNotExist() throws Exception {
-		IAZTECParameters params = this.parser.parse(new String[] { "-i",
+		MAZTECParameters params = this.parser.parse(new String[] { "-i",
 				"idontexist" });
 		params.getInput();
 	}
@@ -157,7 +157,7 @@ public final class IAZTECCommandLineParametersParserTest {
 	public void throwsExceptionIfOutputCannotBeOpened() throws Exception {
 		File tempFile = this.createTempFile();
 		tempFile.setReadOnly();
-		IAZTECParameters params = this.parser.parse(new String[] { "-o",
+		MAZTECParameters params = this.parser.parse(new String[] { "-o",
 				tempFile.getAbsolutePath() });
 		params.getOutput();
 	}

@@ -26,7 +26,6 @@ import br.ime.usp.aztec.io.EncodingOutput;
  */
 public final class AZTEC {
 
-	// TODO refactor to remove this "global" parameter from here
 	private AZTECParameters params;
 	private State state;
 

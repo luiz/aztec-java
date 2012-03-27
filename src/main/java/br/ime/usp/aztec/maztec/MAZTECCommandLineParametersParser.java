@@ -13,16 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec.iaztec;
+package br.ime.usp.aztec.maztec;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import br.ime.usp.aztec.CommandLineParametersParser;
-import br.ime.usp.aztec.iaztec.IAZTECParameters.Builder;
 import br.ime.usp.aztec.io.SignalParser;
 import br.ime.usp.aztec.io.WriterEncodingOutput;
+import br.ime.usp.aztec.maztec.MAZTECParameters.Builder;
 
 /**
  * Handles command-line options for the improved AZTEC algorithm and prints a
@@ -30,12 +30,12 @@ import br.ime.usp.aztec.io.WriterEncodingOutput;
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class IAZTECCommandLineParametersParser extends
-		CommandLineParametersParser<IAZTECParameters> {
+public final class MAZTECCommandLineParametersParser extends
+		CommandLineParametersParser<MAZTECParameters> {
 
 	@Override
-	protected IAZTECParameters buildParameters(CommandLine options) {
-		Builder builder = new IAZTECParameters.Builder();
+	protected MAZTECParameters buildParameters(CommandLine options) {
+		Builder builder = new MAZTECParameters.Builder();
 		return builder
 				.withInput(new SignalParser(this.openInputGivenIn(options)))
 				.withOutput(
@@ -43,19 +43,19 @@ public final class IAZTECCommandLineParametersParser extends
 								.openOutputGivenIn(options)))
 				.withMinimumThreshold(
 						Double.parseDouble(options.getOptionValue('t',
-								String.valueOf(IAZTECParameters.DEFAULT_T_MIN))))
+								String.valueOf(MAZTECParameters.DEFAULT_T_MIN))))
 				.withMaximumThreshold(
 						Double.parseDouble(options.getOptionValue('T',
-								String.valueOf(IAZTECParameters.DEFAULT_T_MAX))))
+								String.valueOf(MAZTECParameters.DEFAULT_T_MAX))))
 				.withInitialThreshold(
 						Double.parseDouble(options.getOptionValue('0', String
-								.valueOf(IAZTECParameters.DEFAULT_INITIAL_T))))
+								.valueOf(MAZTECParameters.DEFAULT_INITIAL_T))))
 				.withCriterionFunctionWeight(
 						Double.parseDouble(options.getOptionValue('1',
-								String.valueOf(IAZTECParameters.DEFAULT_C1))))
+								String.valueOf(MAZTECParameters.DEFAULT_C1))))
 				.withLastThresholdWeight(
 						Double.parseDouble(options.getOptionValue('2',
-								String.valueOf(IAZTECParameters.DEFAULT_C2))))
+								String.valueOf(MAZTECParameters.DEFAULT_C2))))
 				.build();
 	}
 
