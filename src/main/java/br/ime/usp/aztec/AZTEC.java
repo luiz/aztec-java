@@ -26,6 +26,8 @@ import br.ime.usp.aztec.io.EncodingOutput;
  */
 public final class AZTEC {
 
+	// TODO refactor to remove this "global" parameter from here
+	private AZTECParameters params;
 	private State state;
 
 	/**
@@ -42,7 +44,8 @@ public final class AZTEC {
 	 * @see EncodingOutput
 	 */
 	public void encode(AZTECParameters parameters) throws IOException {
-		this.state = new ShortLine(parameters);
+		this.params = parameters;
+		this.state = new ShortLine();
 		for (Double sample : parameters.getInput()) {
 			this.state.process(sample);
 		}
@@ -56,23 +59,17 @@ public final class AZTEC {
 	}
 
 	private class ShortLine implements State {
-		private final Line line;
-		private final AZTECParameters params;
-
-		public ShortLine(AZTECParameters parameters) {
-			this.params = parameters;
-			this.line = new Line(parameters);
-		}
+		private final Line line = new Line();
 
 		@Override
 		public void process(double sample) throws IOException {
 			if (this.line.canContain(sample)) {
 				this.line.update(sample);
 				if (!this.line.isTooShort()) {
-					AZTEC.this.state = new NormalLine(this.params, this.line);
+					AZTEC.this.state = new NormalLine(this.line);
 				}
 			} else {
-				AZTEC.this.state = new PossibleSlope(this.params, this.line);
+				AZTEC.this.state = new PossibleSlope(this.line);
 				AZTEC.this.state.process(sample);
 			}
 		}
@@ -85,10 +82,8 @@ public final class AZTEC {
 
 	private class NormalLine implements State {
 		private final Line line;
-		private final AZTECParameters params;
 
-		NormalLine(AZTECParameters params, Line line) {
-			this.params = params;
+		NormalLine(Line line) {
 			this.line = line;
 		}
 
@@ -98,11 +93,11 @@ public final class AZTEC {
 				this.line.update(sample);
 				if (this.line.isTooLong()) {
 					this.finish();
-					AZTEC.this.state = new ShortLine(this.params);
+					AZTEC.this.state = new ShortLine();
 				}
 			} else {
 				this.finish();
-				AZTEC.this.state = new ShortLine(this.params);
+				AZTEC.this.state = new ShortLine();
 				AZTEC.this.state.process(sample);
 			}
 		}
@@ -115,12 +110,9 @@ public final class AZTEC {
 
 	private class PossibleSlope implements State {
 		private final Line previousLine;
-		private final Line currentLine;
-		private final AZTECParameters params;
+		private final Line currentLine = new Line();
 
-		PossibleSlope(AZTECParameters params, Line previousLine) {
-			this.params = params;
-			this.currentLine = new Line(params);
+		PossibleSlope(Line previousLine) {
 			this.previousLine = previousLine;
 		}
 
@@ -130,8 +122,7 @@ public final class AZTEC {
 				this.currentLine.update(sample);
 				if (!this.currentLine.isTooShort()) {
 					this.previousLine.end();
-					AZTEC.this.state = new NormalLine(this.params,
-							this.currentLine);
+					AZTEC.this.state = new NormalLine(this.currentLine);
 				}
 			} else {
 				this.detectSlopeType();
@@ -142,13 +133,13 @@ public final class AZTEC {
 		private void detectSlopeType() {
 			int duration = this.previousLine.length + this.currentLine.length;
 			if (this.currentLine.average() > this.previousLine.average()) {
-				Slope slope = new Slope(this.params, this.previousLine.min,
+				Slope slope = new Slope(this.previousLine.min,
 						this.currentLine.max, 1.0, duration);
-				AZTEC.this.state = new AscendingSlope(this.params, slope);
+				AZTEC.this.state = new AscendingSlope(slope);
 			} else {
-				Slope slope = new Slope(this.params, this.currentLine.min,
+				Slope slope = new Slope(this.currentLine.min,
 						this.previousLine.max, -1.0, duration);
-				AZTEC.this.state = new DescendingSlope(this.params, slope);
+				AZTEC.this.state = new DescendingSlope(slope);
 			}
 		}
 
@@ -161,13 +152,11 @@ public final class AZTEC {
 
 	private abstract class SlopeState implements State {
 		protected final Slope slope;
-		protected final AZTECParameters params;
 		protected Line line;
 
-		SlopeState(AZTECParameters params, Slope slope) {
-			this.params = params;
+		SlopeState(Slope slope) {
 			this.slope = slope;
-			this.line = new Line(params);
+			this.line = new Line();
 		}
 
 		@Override
@@ -176,16 +165,16 @@ public final class AZTEC {
 				this.line.update(sample);
 				if (!this.line.isTooShort()) {
 					this.slope.end();
-					AZTEC.this.state = new NormalLine(this.params, this.line);
+					AZTEC.this.state = new NormalLine(this.line);
 				}
 			} else {
 				if (this.changedSignal()) {
 					this.slope.end();
-					AZTEC.this.state = new PossibleSlope(this.params, this.line);
+					AZTEC.this.state = new PossibleSlope(this.line);
 					AZTEC.this.state.process(sample);
 				} else {
 					this.slope.update(this.line);
-					this.line = new Line(this.params);
+					this.line = new Line();
 					this.line.update(sample);
 				}
 			}
@@ -202,8 +191,8 @@ public final class AZTEC {
 
 	private class AscendingSlope extends SlopeState {
 
-		AscendingSlope(AZTECParameters params, Slope slope) {
-			super(params, slope);
+		AscendingSlope(Slope slope) {
+			super(slope);
 		}
 
 		@Override
@@ -213,8 +202,8 @@ public final class AZTEC {
 	}
 
 	private class DescendingSlope extends SlopeState {
-		DescendingSlope(AZTECParameters params, Slope slope) {
-			super(params, slope);
+		DescendingSlope(Slope slope) {
+			super(slope);
 		}
 
 		@Override
@@ -227,11 +216,6 @@ public final class AZTEC {
 		private double min = Double.POSITIVE_INFINITY;
 		private double max = Double.NEGATIVE_INFINITY;
 		private int length = 0;
-		private final AZTECParameters params;
-
-		Line(AZTECParameters parameters) {
-			this.params = parameters;
-		}
 
 		void update(double current) {
 			this.min = Math.min(current, this.min);
@@ -240,20 +224,20 @@ public final class AZTEC {
 		}
 
 		boolean canContain(double value) {
-			return value <= this.min + this.params.getK()
-					&& this.params.getK() + value >= this.max;
+			return value <= this.min + AZTEC.this.params.getK()
+					&& AZTEC.this.params.getK() + value >= this.max;
 		}
 
 		boolean isTooLong() {
-			return this.length >= this.params.getN();
+			return this.length >= AZTEC.this.params.getN();
 		}
 
 		boolean isTooShort() {
-			return this.length < this.params.getT();
+			return this.length < AZTEC.this.params.getT();
 		}
 
 		void end() throws IOException {
-			EncodingOutput out = this.params.getOutput();
+			EncodingOutput out = AZTEC.this.params.getOutput();
 			out.put(this.length);
 			out.put(this.average());
 		}
@@ -274,11 +258,8 @@ public final class AZTEC {
 		private double max;
 		private double duration;
 		private final double signal;
-		private final AZTECParameters params;
 
-		Slope(AZTECParameters params, double min, double max, double signal,
-				double duration) {
-			this.params = params;
+		Slope(double min, double max, double signal, double duration) {
 			this.min = min;
 			this.max = max;
 			this.signal = signal;
@@ -286,7 +267,7 @@ public final class AZTEC {
 		}
 
 		void end() throws IOException {
-			EncodingOutput out = this.params.getOutput();
+			EncodingOutput out = AZTEC.this.params.getOutput();
 			out.put(-this.duration);
 			out.put(this.signal * (this.max - this.min));
 		}
