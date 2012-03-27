@@ -31,7 +31,7 @@ public final class IAZTECMain {
 		IAZTECCommandLineParametersParser parser = new IAZTECCommandLineParametersParser();
 		try {
 			IAZTECParameters params = parser.parse(args);
-			// new IAZTEC(params).encode(params.getInput());
+			// new IAZTEC().encode(params);
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();

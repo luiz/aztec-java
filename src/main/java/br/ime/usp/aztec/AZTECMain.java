@@ -31,7 +31,7 @@ public final class AZTECMain {
 		AZTECCommandLineParametersParser parser = new AZTECCommandLineParametersParser();
 		try {
 			AZTECParameters params = parser.parse(args);
-			new AZTEC(params).encode(params.getInput());
+			new AZTEC().encode(params);
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();

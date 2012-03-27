@@ -34,21 +34,24 @@ public final class AZTECTest {
 	@Before
 	public void setUp() throws Exception {
 		this.output = new MockEncodingOutput();
-		AZTECParameters params = this.createDefaultParameters();
-		this.aztec = new AZTEC(params);
+		this.aztec = new AZTEC();
 	}
 
 	@Test
 	public void encodesALineAsALine() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.0, 1.0, 1.0);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(4.0, 1.0));
 	}
 
 	@Test
 	public void encodesSomethingCloseToALineAsALine() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.1, 1.1, 1.1, 1.0, 1.1);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(6.0, 1.05));
 	}
 
@@ -56,7 +59,9 @@ public final class AZTECTest {
 	public void createsTwoLinesIfInputVariationExceedsMaximumAcceptableVariation()
 			throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.01, 1.1, 1.0, 1.02, 1.12, 1.12);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(5.0, 1.05, 2.0, 1.12));
 	}
 
@@ -64,7 +69,9 @@ public final class AZTECTest {
 	public void breaksABigLineIntoTwo() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.1, 1.1, 1.1, 1.0, 1.1, 1.1,
 				1.1, 1.1, 1.1, 1.1);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(10.0, 1.05, 1.0, 1.1));
 	}
 
@@ -72,7 +79,9 @@ public final class AZTECTest {
 	public void encodesASinglePositiveSlope() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.5,
 				1.6, 1.8, 1.9, 2.0);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(-11.0, 1.0));
 	}
 
@@ -80,7 +89,9 @@ public final class AZTECTest {
 	public void encodesASingleNegativeSlope() throws Exception {
 		Iterable<Double> signal = asList(2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4,
 				1.3, 1.2, 1.1, 1.0);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(-11.0, -1.0));
 	}
 
@@ -88,7 +99,9 @@ public final class AZTECTest {
 	public void encodesASmallLineBetweenTwoLines() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.0, 1.1, 1.1, 1.2, 1.3, 1.4,
 				1.5, 1.5, 1.5);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(4.0, 1.05, 2.0, 1.25, 4.0, 1.45));
 	}
 
@@ -96,7 +109,9 @@ public final class AZTECTest {
 	public void encodesASmallSlopeBetweenTwoLines() throws Exception {
 		Iterable<Double> signal = asList(1.0, 1.05, 1.0, 1.05, 1.15, 1.3, 1.4,
 				1.45, 1.5, 1.5, 1.5);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(4.0, 1.025, -3.0, 0.25, 4.0, 1.475));
 	}
 
@@ -104,7 +119,9 @@ public final class AZTECTest {
 	public void encodesABigNegativeSlopeBetweenTwoLines() throws Exception {
 		Iterable<Double> signal = asList(10.0, 10.0, 10.0, 10.0, 9.0, 8.0, 7.0,
 				6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(4.0, 10.0, -8.0, -7.0, 4.0, 1.0));
 	}
 
@@ -113,20 +130,26 @@ public final class AZTECTest {
 			throws Exception {
 		Iterable<Double> signal = asList(1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0,
 				0.0, 0.5, 1.0, 1.5, 2.0);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(-4.0, 3.0, -4.0, -3.0, -4.0, 1.5));
 	}
 
 	@Test
 	public void encodesASmallSlopeAtTheEndOfTheSignal() throws Exception {
 		Iterable<Double> signal = asList(0.0, 0.0, 0.0, 0.0, 1.0, 2.0);
-		this.aztec.encode(signal);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
 		assertThat(this.output, contains(4.0, 0.0, -2.0, 1.0));
 	}
 
-	private AZTECParameters createDefaultParameters() {
+	private AZTECParameters createDefaultParametersUsingInput(
+			Iterable<Double> signal) {
 		return new AZTECParameters.Builder()
 				.withMaximumAcceptableVariation(0.1)
-				.withMaximumLineLength(10.0).withOutput(this.output).build();
+				.withMaximumLineLength(10.0).withInput(signal)
+				.withOutput(this.output).build();
 	}
 }

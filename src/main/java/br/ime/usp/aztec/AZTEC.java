@@ -26,28 +26,27 @@ import br.ime.usp.aztec.io.EncodingOutput;
  */
 public final class AZTEC {
 
-	private final AZTECParameters params;
+	// TODO refactor to remove this "global" parameter from here
+	private AZTECParameters params;
 	private State state;
-
-	public AZTEC(AZTECParameters params) {
-		this.params = params;
-	}
 
 	/**
 	 * Encodes the given signal, writing the output to the
-	 * {@link EncodingOutput} specified in the {@link AZTECParameters} passed on
-	 * the construction of this object
+	 * {@link EncodingOutput} specified in the {@link AZTECParameters} passed as
+	 * argument
 	 * 
-	 * @param signal
-	 *            Signal to be encoded
+	 * @param parameters
+	 *            Parameters for the execution of the algorithm, such as input,
+	 *            output, maximum line length etc.
 	 * @throws IOException
 	 *             If the output throws it
 	 * @see AZTECParameters
 	 * @see EncodingOutput
 	 */
-	public void encode(Iterable<Double> signal) throws IOException {
+	public void encode(AZTECParameters parameters) throws IOException {
+		this.params = parameters;
 		this.state = new ShortLine();
-		for (Double sample : signal) {
+		for (Double sample : parameters.getInput()) {
 			this.state.process(sample);
 		}
 		this.state.finish();
