@@ -23,7 +23,7 @@ import br.ime.usp.aztec.AZTECCommandLineParametersParser;
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public class PleaseHelpMeException extends Exception {
+public final class PleaseHelpMeException extends Exception {
 	private static final long serialVersionUID = -8551139424413834443L;
 
 	/**

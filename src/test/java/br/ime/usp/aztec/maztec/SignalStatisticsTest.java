@@ -15,6 +15,7 @@ limitations under the License.
  */
 package br.ime.usp.aztec.maztec;
 
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -23,7 +24,7 @@ import org.junit.Test;
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public class SignalStatisticsTest {
+public final class SignalStatisticsTest {
 	@Test
 	public void hasAverageZeroWhenCreated() throws Exception {
 		assertThat(new SignalStatistics().getAverage(), is(0.0));
@@ -76,5 +77,19 @@ public class SignalStatisticsTest {
 		assertThat(stats.getThirdMoment(), is(0.0));
 		stats.update(6.0);
 		assertThat(stats.getThirdMoment(), is(4.5));
+	}
+
+	@Test
+	public void updatesTheThirdMomentWhenTheSignalHasNegativeSkewness()
+			throws Exception {
+		SignalStatistics stats = new SignalStatistics();
+		stats.update(1.0);
+		assertThat(stats.getThirdMoment(), is(0.0));
+		stats.update(4.0);
+		assertThat(stats.getThirdMoment(), is(0.0));
+		stats.update(5.0);
+		assertThat(stats.getThirdMoment(), closeTo(-70.0 / 27.0, 1.0e-10));
+		stats.update(6.0);
+		assertThat(stats.getThirdMoment(), is(-4.5));
 	}
 }

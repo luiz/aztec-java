@@ -15,8 +15,13 @@ limitations under the License.
  */
 package br.ime.usp.aztec.maztec;
 
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
 import br.ime.usp.aztec.AZTECCommandLineParametersParser;
 import br.ime.usp.aztec.io.EncodingOutput;
+import br.ime.usp.aztec.io.SignalParser;
+import br.ime.usp.aztec.io.WriterEncodingOutput;
 
 /**
  * Container for improved AZTEC algorithm parameters. Must be created with the
@@ -119,6 +124,18 @@ public final class MAZTECParameters {
 	 */
 	public static final class Builder {
 		private final MAZTECParameters params = new MAZTECParameters();
+
+		public Builder() {
+			this.params.c1 = DEFAULT_C1;
+			this.params.c2 = DEFAULT_C2;
+			this.params.initialT = DEFAULT_INITIAL_T;
+			this.params.tMin = DEFAULT_T_MIN;
+			this.params.tMax = DEFAULT_T_MAX;
+			this.params.input = new SignalParser(new InputStreamReader(
+					System.in));
+			this.params.output = new WriterEncodingOutput(
+					new OutputStreamWriter(System.out));
+		}
 
 		/**
 		 * @param c1

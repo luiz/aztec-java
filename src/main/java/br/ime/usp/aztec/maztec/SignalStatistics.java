@@ -20,7 +20,7 @@ package br.ime.usp.aztec.maztec;
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public class SignalStatistics {
+public final class SignalStatistics {
 
 	private int count = 0;
 	private double average = 0.0;

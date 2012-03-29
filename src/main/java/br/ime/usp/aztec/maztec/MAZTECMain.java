@@ -31,7 +31,7 @@ public final class MAZTECMain {
 		MAZTECCommandLineParametersParser parser = new MAZTECCommandLineParametersParser();
 		try {
 			MAZTECParameters params = parser.parse(args);
-			// new MAZTEC().encode(params);
+			new MAZTEC(new SignalStatistics()).encode(params);
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();
