@@ -38,5 +38,49 @@ public final class MAZTECParametersTest {
 		assertThat(params.getOutput(), notNullValue());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void doesntAllowPassingMaximumThresholdValueSmallerThanInitialValue()
+			throws Exception {
+		new MAZTECParameters.Builder().withInitialThreshold(1.0)
+				.withMaximumThreshold(0.9);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void doesntAllowPassingInitialThresholdBiggerThanMaximumThreshold()
+			throws Exception {
+		new MAZTECParameters.Builder().withMaximumThreshold(0.9)
+				.withInitialThreshold(1.0);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void doesntAllowPassingMinimumThresholdValueBiggerThanInitialValue()
+			throws Exception {
+		new MAZTECParameters.Builder().withInitialThreshold(1.0)
+				.withMinimumThreshold(1.1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void doesntAllowPassingInitialThresholdSmallerThanMinimumThreshold()
+			throws Exception {
+		new MAZTECParameters.Builder().withMinimumThreshold(1.1)
+				.withInitialThreshold(1.0);
+	}
+
+	@Test
+	public void allowsDefiningBigMinimumThresholdValueAndAdjustsInitialValueAccordingly()
+			throws Exception {
+		MAZTECParameters params = new MAZTECParameters.Builder()
+				.withMinimumThreshold(1.1).build();
+		assertThat(params.getInitialT(), is(1.1));
+	}
+
+	@Test
+	public void allowsDefiningSmallMaximumThresholdValueAndAdjustsInitialValueAccordingly()
+			throws Exception {
+		MAZTECParameters params = new MAZTECParameters.Builder()
+				.withMaximumThreshold(0.01).build();
+		assertThat(params.getInitialT(), is(0.01));
+	}
+
 	// Is it worth testing the methods of the builder?
 }

@@ -20,30 +20,7 @@ package br.ime.usp.aztec.maztec;
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class ThresholdCalculator {
-	private final SignalStatistics statsCalculator;
-	private final MAZTECParameters params;
-	private double threshold;
-	private double cf;
-
-	/**
-	 * Initialized a new threshold calculator for the modified AZTEC algorithm
-	 * 
-	 * @param params
-	 *            The parameters for the algorithm execution with an initial
-	 *            threshold value
-	 * @param statsCalculator
-	 *            An object that knows how to compute statistics from the signal
-	 *            in an online fashion. Used for updating the initial threshold
-	 *            given in the algorithm parameters
-	 */
-	public ThresholdCalculator(MAZTECParameters params,
-			SignalStatistics statsCalculator) {
-		this.params = params;
-		this.statsCalculator = statsCalculator;
-		this.threshold = params.getInitialT();
-		this.cf = 0.0;
-	}
+public interface ThresholdCalculator {
 
 	/**
 	 * Use this to notify this object that a new sample has been received and
@@ -52,21 +29,11 @@ public final class ThresholdCalculator {
 	 * @param sample
 	 *            The sample value
 	 */
-	public void newSample(double sample) {
-		this.statsCalculator.update(sample);
-		double lastCf = this.cf;
-		this.cf = this.params.getC1()
-				* (this.statsCalculator.getStandardDeviation() + this.statsCalculator
-						.getThirdMoment());
-		this.threshold = this.threshold - this.params.getC2()
-				* (this.cf - lastCf) * this.threshold;
-	}
+	void newSample(double sample);
 
 	/**
 	 * @return the current threshold for the algorithm
 	 */
-	public double getCurrentThreshold() {
-		return this.threshold;
-	}
+	double getCurrentThreshold();
 
 }

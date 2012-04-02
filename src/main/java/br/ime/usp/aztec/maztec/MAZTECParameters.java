@@ -45,7 +45,7 @@ public final class MAZTECParameters {
 	/**
 	 * Default value for the minimum value of the threshold
 	 */
-	public static final double DEFAULT_T_MIN = 0;
+	public static final double DEFAULT_T_MIN = Double.NEGATIVE_INFINITY;
 
 	/**
 	 * Default value for the maximum value of the threshold
@@ -166,6 +166,14 @@ public final class MAZTECParameters {
 		 * @see MAZTECParameters#getTMin()
 		 */
 		public Builder withMinimumThreshold(double tMin) {
+			if (tMin > this.params.initialT) {
+				if (this.params.initialT == DEFAULT_INITIAL_T) {
+					this.params.initialT = tMin;
+				} else {
+					throw new IllegalArgumentException(
+							"Minimum threshold cannot be bigger than specified initial threshold");
+				}
+			}
 			this.params.tMin = tMin;
 			return this;
 		}
@@ -177,6 +185,14 @@ public final class MAZTECParameters {
 		 * @see MAZTECParameters#getTMax()
 		 */
 		public Builder withMaximumThreshold(double tMax) {
+			if (tMax < this.params.initialT) {
+				if (this.params.initialT == DEFAULT_INITIAL_T) {
+					this.params.initialT = tMax;
+				} else {
+					throw new IllegalArgumentException(
+							"Maximum threshold cannot be smaller than specified initial threshold");
+				}
+			}
 			this.params.tMax = tMax;
 			return this;
 		}
@@ -188,6 +204,14 @@ public final class MAZTECParameters {
 		 * @see MAZTECParameters#getInitialT()
 		 */
 		public Builder withInitialThreshold(double initialT) {
+			if (initialT < this.params.tMin) {
+				throw new IllegalArgumentException(
+						"Initial value cannot be smaller than minimum threshold");
+			}
+			if (initialT > this.params.tMax) {
+				throw new IllegalArgumentException(
+						"Initial value cannot be bigger than maximum threshold");
+			}
 			this.params.initialT = initialT;
 			return this;
 		}

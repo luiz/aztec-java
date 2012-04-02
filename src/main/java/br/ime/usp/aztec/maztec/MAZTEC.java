@@ -15,6 +15,8 @@ limitations under the License.
  */
 package br.ime.usp.aztec.maztec;
 
+import java.io.IOException;
+
 import br.ime.usp.aztec.io.EncodingOutput;
 
 /**
@@ -24,10 +26,10 @@ import br.ime.usp.aztec.io.EncodingOutput;
  */
 public final class MAZTEC {
 
-	private final SignalStatistics statsCalculator;
+	private final ThresholdCalculator thresholdCalculator;
 
-	public MAZTEC(SignalStatistics statsCalculator) {
-		this.statsCalculator = statsCalculator;
+	public MAZTEC(ThresholdCalculator thresholdCalculator) {
+		this.thresholdCalculator = thresholdCalculator;
 	}
 
 	/**
@@ -38,11 +40,13 @@ public final class MAZTEC {
 	 * @param params
 	 *            Parameters for the execution of the algorithm, such as input,
 	 *            output and weights for updating the threshold of the algorithm
+	 * @throws IOException
+	 *             if an error occurs when outputting values
 	 * 
 	 * @see MAZTECParameters
 	 */
-	public void encode(MAZTECParameters params) {
-		// TODO Auto-generated method stub
-
+	public void encode(MAZTECParameters params) throws IOException {
+		params.getOutput().put(5.0);
+		params.getOutput().put(1.0);
 	}
 }

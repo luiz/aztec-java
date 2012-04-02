@@ -31,7 +31,8 @@ public final class MAZTECMain {
 		MAZTECCommandLineParametersParser parser = new MAZTECCommandLineParametersParser();
 		try {
 			MAZTECParameters params = parser.parse(args);
-			new MAZTEC(new OnlineSignalStatistics()).encode(params);
+			new MAZTEC(new DefaultThresholdCalculator(params,
+					new OnlineSignalStatistics())).encode(params);
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();

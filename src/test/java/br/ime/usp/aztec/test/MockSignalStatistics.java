@@ -16,11 +16,11 @@ limitations under the License.
 package br.ime.usp.aztec.test;
 
 import br.ime.usp.aztec.maztec.SignalStatistics;
-import br.ime.usp.aztec.maztec.ThresholdCalculator;
+import br.ime.usp.aztec.maztec.DefaultThresholdCalculator;
 
 /**
  * Only stores fake statistical measures to test if the
- * {@link ThresholdCalculator} uses them properly.
+ * {@link DefaultThresholdCalculator} uses them properly.
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
