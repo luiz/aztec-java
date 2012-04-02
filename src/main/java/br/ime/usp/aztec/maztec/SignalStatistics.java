@@ -16,42 +16,32 @@ limitations under the License.
 package br.ime.usp.aztec.maztec;
 
 /**
- * Stores and updates statistics about a signal
+ * The modified AZTEC algorithm depends upon the average, the standard deviation
+ * and the third moment of a signal to calculate its threshold. Thus, this is
+ * the interface an implementor of the calculation of such statistics must
+ * implement.
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class SignalStatistics {
-
-	private int count = 0;
-	private double average = 0.0;
-	private double stdDev = 0.0;
-	private double thirdMoment = 0.0;
-	private double m2 = 0.0;
-	private double m3 = 0.0;
+public interface SignalStatistics {
 
 	/**
 	 * @return the average calculated from the signal values given for
 	 *         {@link #update(double)}
 	 */
-	public double getAverage() {
-		return this.average;
-	}
+	double getAverage();
 
 	/**
 	 * @return the standard deviation calculated from the signal values given
 	 *         for {@link #update(double)}
 	 */
-	public double getStandardDeviation() {
-		return this.stdDev;
-	}
+	double getStandardDeviation();
 
 	/**
 	 * @return the third moment of the signal values given for
 	 *         {@link #update(double)}
 	 */
-	public double getThirdMoment() {
-		return this.thirdMoment;
-	}
+	double getThirdMoment();
 
 	/**
 	 * Updates the statistics based on the given value
@@ -59,18 +49,6 @@ public final class SignalStatistics {
 	 * @param value
 	 *            the next value of the signal
 	 */
-	public void update(double value) {
-		double delta = (value - this.average);
-		int lastCount = this.count++;
-		double deltaByN = delta / this.count;
-		double updateSquareSumTerm = delta * deltaByN * lastCount;
-
-		this.average += deltaByN;
-		this.m3 += updateSquareSumTerm * deltaByN * (this.count - 2) - 3
-				* deltaByN * this.m2;
-		this.m2 += updateSquareSumTerm;
-		this.stdDev = Math.sqrt(this.m2 / this.count);
-		this.thirdMoment = this.m3 / this.count;
-	}
+	void update(double value);
 
 }

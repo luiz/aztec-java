@@ -24,25 +24,25 @@ import org.junit.Test;
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class SignalStatisticsTest {
+public final class OnlineSignalStatisticsTest {
 	@Test
 	public void hasAverageZeroWhenCreated() throws Exception {
-		assertThat(new SignalStatistics().getAverage(), is(0.0));
+		assertThat(new OnlineSignalStatistics().getAverage(), is(0.0));
 	}
 
 	@Test
 	public void hasStandardDeviationZeroWhenCreated() throws Exception {
-		assertThat(new SignalStatistics().getStandardDeviation(), is(0.0));
+		assertThat(new OnlineSignalStatistics().getStandardDeviation(), is(0.0));
 	}
 
 	@Test
 	public void hasThirdMomentZeroWhenCreated() throws Exception {
-		assertThat(new SignalStatistics().getThirdMoment(), is(0.0));
+		assertThat(new OnlineSignalStatistics().getThirdMoment(), is(0.0));
 	}
 
 	@Test
 	public void updatesTheAverage() throws Exception {
-		SignalStatistics stats = new SignalStatistics();
+		SignalStatistics stats = new OnlineSignalStatistics();
 		stats.update(1.0);
 		assertThat(stats.getAverage(), is(1.0));
 		stats.update(2.0);
@@ -55,7 +55,7 @@ public final class SignalStatisticsTest {
 
 	@Test
 	public void updatesTheStandardDeviation() throws Exception {
-		SignalStatistics stats = new SignalStatistics();
+		SignalStatistics stats = new OnlineSignalStatistics();
 		stats.update(1.0);
 		assertThat(stats.getStandardDeviation(), is(0.0));
 		stats.update(2.0);
@@ -68,7 +68,7 @@ public final class SignalStatisticsTest {
 
 	@Test
 	public void updatesTheThirdMoment() throws Exception {
-		SignalStatistics stats = new SignalStatistics();
+		SignalStatistics stats = new OnlineSignalStatistics();
 		stats.update(1.0);
 		assertThat(stats.getThirdMoment(), is(0.0));
 		stats.update(2.0);
@@ -82,7 +82,7 @@ public final class SignalStatisticsTest {
 	@Test
 	public void updatesTheThirdMomentWhenTheSignalHasNegativeSkewness()
 			throws Exception {
-		SignalStatistics stats = new SignalStatistics();
+		SignalStatistics stats = new OnlineSignalStatistics();
 		stats.update(1.0);
 		assertThat(stats.getThirdMoment(), is(0.0));
 		stats.update(4.0);

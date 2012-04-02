@@ -22,19 +22,21 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.ime.usp.aztec.test.MockSignalStatistics;
+
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class ThresholdCalculatorTest {
 	private MAZTECParameters parameters;
-	private SignalStatistics stats;
+	private MockSignalStatistics stats;
 	private ThresholdCalculator thresholdCalculator;
 
 	@Before
 	public void setUp() throws Exception {
 		this.parameters = new MAZTECParameters.Builder().withInitialThreshold(
 				0.07).build();
-		this.stats = new SignalStatistics();
+		this.stats = new MockSignalStatistics();
 		this.thresholdCalculator = new ThresholdCalculator(this.parameters,
 				this.stats);
 	}
@@ -46,18 +48,64 @@ public final class ThresholdCalculatorTest {
 	}
 
 	@Test
-	public void thresholdValueMustBeTheSameAfterTheFirstUpdate()
-			throws Exception {
+	public void updatesThresholdBasedOnStatistics() throws Exception {
+		this.stats.returnsAverage(42.0);
+		this.stats.returnsStandardDeviation(0.0);
+		this.stats.returnsThirdMoment(0.0);
 		this.thresholdCalculator.newSample(42);
+
 		assertThat(this.thresholdCalculator.getCurrentThreshold(),
 				is(this.parameters.getInitialT()));
+
+		this.stats.returnsAverage(42.5);
+		this.stats.returnsStandardDeviation(0.5);
+		this.stats.returnsThirdMoment(0.0);
+		this.thresholdCalculator.newSample(43);
+
+		assertThat(this.thresholdCalculator.getCurrentThreshold(),
+				closeTo(0.0672, 1.0e-10));
+
+		// from now on, statistics are fake
+		this.stats.returnsAverage(43.0);
+		this.stats.returnsStandardDeviation(0.6);
+		this.stats.returnsThirdMoment(0.1);
+		this.thresholdCalculator.newSample(45);
+
+		assertThat(this.thresholdCalculator.getCurrentThreshold(),
+				closeTo(0.0661248, 1.0e-10));
 	}
 
 	@Test
-	public void updatesThresholdAfterHavingSomeSamples() throws Exception {
-		this.thresholdCalculator.newSample(42);
-		this.thresholdCalculator.newSample(43);
-		assertThat(this.thresholdCalculator.getCurrentThreshold(),
-				closeTo(0.0672, 1.0e-10));
+	public void updatesThresholdBasedOnWeights() throws Exception {
+		MAZTECParameters parameters = new MAZTECParameters.Builder()
+				.withInitialThreshold(1.0).withCriterionFunctionWeight(2.0)
+				.withLastThresholdWeight(0.5).build();
+		ThresholdCalculator thresholdCalculator = new ThresholdCalculator(
+				parameters, this.stats);
+
+		this.stats.returnsAverage(42.0);
+		this.stats.returnsStandardDeviation(0.0);
+		this.stats.returnsThirdMoment(0.0);
+		thresholdCalculator.newSample(42);
+
+		assertThat(thresholdCalculator.getCurrentThreshold(),
+				is(parameters.getInitialT()));
+
+		this.stats.returnsAverage(42.5);
+		this.stats.returnsStandardDeviation(0.5);
+		this.stats.returnsThirdMoment(0.0);
+		thresholdCalculator.newSample(43);
+
+		assertThat(thresholdCalculator.getCurrentThreshold(),
+				closeTo(0.5, 1.0e-10));
+
+		// from now on, statistics are fake
+		this.stats.returnsAverage(43.0);
+		this.stats.returnsStandardDeviation(0.6);
+		this.stats.returnsThirdMoment(0.1);
+		thresholdCalculator.newSample(45);
+
+		assertThat(thresholdCalculator.getCurrentThreshold(),
+				closeTo(0.4, 1.0e-10));
 	}
 }
