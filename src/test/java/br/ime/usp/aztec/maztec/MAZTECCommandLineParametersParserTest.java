@@ -31,8 +31,6 @@ import org.junit.Test;
 import br.ime.usp.aztec.io.EncodingOutput;
 import br.ime.usp.aztec.io.PleaseHelpMeException;
 import br.ime.usp.aztec.io.ReadOnlyOutputException;
-import br.ime.usp.aztec.maztec.MAZTECCommandLineParametersParser;
-import br.ime.usp.aztec.maztec.MAZTECParameters;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
@@ -47,7 +45,8 @@ public final class MAZTECCommandLineParametersParserTest {
 	public void setUp() throws Exception {
 		File tempFile = this.createTempFile();
 		this.filledParameters = new String[] { "-t", "0.1", "-T", "1", "-0",
-				"0.5", "-1", "2", "-2", "0.2", "-i", tempFile.getAbsolutePath() };
+				"0.5", "-1", "2", "-2", "0.2", "-I", "-i",
+				tempFile.getAbsolutePath() };
 		this.defaultParameters = new String[0];
 		this.parser = new MAZTECCommandLineParametersParser();
 	}
@@ -86,6 +85,13 @@ public final class MAZTECCommandLineParametersParserTest {
 	public void extractsLastThresholdWeightValueFromCommandLine()
 			throws Exception {
 		assertThat(this.parser.parse(this.filledParameters).getC2(), is(0.2));
+	}
+
+	@Test
+	public void detectsIfTheImprovedVersionOfTheAlgorithmMustBeUsed()
+			throws Exception {
+		assertThat(this.parser.parse(this.filledParameters).isImproved(),
+				is(true));
 	}
 
 	@Test(expected = PleaseHelpMeException.class)
@@ -144,6 +150,13 @@ public final class MAZTECCommandLineParametersParserTest {
 	public void givesDefaultLastThresholdWeightIfNoneGiven() throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getC2(),
 				is(MAZTECParameters.DEFAULT_C2));
+	}
+
+	@Test
+	public void doesNotUseTheImprovedVersionOfTheAlgorithmByDefault()
+			throws Exception {
+		assertThat(this.parser.parse(this.defaultParameters).isImproved(),
+				is(false));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

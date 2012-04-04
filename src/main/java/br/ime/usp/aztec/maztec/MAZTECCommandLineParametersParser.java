@@ -36,6 +36,9 @@ public final class MAZTECCommandLineParametersParser extends
 	@Override
 	protected MAZTECParameters buildParameters(CommandLine options) {
 		Builder builder = new MAZTECParameters.Builder();
+		if (options.hasOption('I')) {
+			builder.improved();
+		}
 		return builder
 				.withInput(new SignalParser(this.openInputGivenIn(options)))
 				.withOutput(
@@ -80,12 +83,14 @@ public final class MAZTECCommandLineParametersParser extends
 				"Defines the weight of the last threshold in"
 						+ " the calculation of the new one (the constant c2)."
 						+ " Defaults to 0.08");
+		defaultOptions.addOption("I", false,
+				"Use the improved version of modified AZTEC algorithm");
 	}
 
 	@Override
 	public void printHelp() {
 		HelpFormatter help = new HelpFormatter();
-		help.printHelp(60, "iaztec", "Improved AZTEC algorithm encoder",
+		help.printHelp(60, "MAZTEC", "Modified AZTEC algorithm encoder",
 				this.getCommandLineOptions(),
 				"Feel free to send any comments to "
 						+ "lreal at ime dot usp dot br", true);
