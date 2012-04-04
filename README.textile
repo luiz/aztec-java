@@ -1,6 +1,6 @@
 h1. What is this?
 
-Well, this is an ECG (electrocardiogram) compressor that uses the AZTEC algorithm, published in "this article.":http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4502549
+Well, this is a collection of ECG (electrocardiogram) compressors based on the AZTEC algorithm: the AZTEC algorithm itself, published in "this article,":http://dx.doi.org/10.1109/TBME.1968.4502549 other that uses the modified AZTEC algorithm, published in "this article,":http://dx.doi.org/10.1109/10.2121 and other that uses the improved modified AZTEC algorithm, published in "this article.":http://dx.doi.org/10.1016/j.compeleceng.2005.02.002
 
 h1. How do I use it?
 
@@ -8,27 +8,43 @@ You need to download the JAR (see "Downloads" tab above) and Apache's Common CLI
 
 <pre>
 <code>
-java -jar aztec-java-1.0.jar
+java -jar aztec-java-2.0.jar
 </code>
 </pre>
 
-to see a help message, which may guide you using it. Basically, you need to specify the parameter <code>-K</code>, that controls the compression level. It represents how big can be the difference between the signal and the output.
+to see a help message, which may guide you using it.
 
-Let's see an example. If you have a file with an ECG called "ecg.txt", you can just run:
+First, you need to specify the algorithm you want to use. For instance, if you want to use the AZTEC algorithm, you need to pass "AZTEC" as the first parameter in the command line. To see which parameters can be used for an algorithm, pass its name and the flag <code>-h</code>. For instance:
 
 <pre>
 <code>
-java -jar aztec-java-1.0.jar -i ecg.txt -K 0.1
+java -jar aztec-java-2.0.jar AZTEC -h
 </code>
 </pre>
 
-and the result will be printed in the console.
+Let's see an example. If you have a file with an ECG called "ecg.txt" and you want to compress it using the AZTEC algorithm, you can just run:
+
+<pre>
+<code>
+java -jar aztec-java-2.0.jar AZTEC -i ecg.txt -K 0.1
+</code>
+</pre>
+
+and the result will be printed in the console. The parameter <code>-K</code> is the compression level. It represents how big can be the difference between the signal and the output.
+
+If you want to use another encoder, such as the modified AZTEC algorithm, you can do the following, as this algorithm has no mandatory arguments:
+
+<pre>
+<code>
+java -jar aztec-java-2.0.jar MAZTEC -i ecg.txt
+</code>
+</pre>
 
 If you want some ECG signals to test the algorithm, you can find some "here.":http://www.physionet.org/physiobank/
 
 h1. How do I build it myself?
 
-This project depends on "Maven":http://maven.apache.org/ to compile the source code, run the tests, generate documentation and the JARs. Once you have Maven installed, it should be easy to get it building.
+This project depends on "Maven":http://maven.apache.org/ to compile the source code, run the tests and generate documentation and the JARs. Once you have Maven installed, it should be easy to get it building.
 
 h1. Can I reuse this code?
 
