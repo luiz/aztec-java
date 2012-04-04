@@ -28,6 +28,15 @@ public final class MAZTEC {
 
 	private final ThresholdCalculator thresholdCalculator;
 
+	/**
+	 * Initializes a new instance of the encoder
+	 * 
+	 * @param thresholdCalculator
+	 *            a {@link ThresholdCalculator} is used to calculate the maximum
+	 *            distance between the maximum and the minimum of the signal in
+	 *            a small piece of it. When the signal falls off this maximum
+	 *            distance, a line is generated in the output.
+	 */
 	public MAZTEC(ThresholdCalculator thresholdCalculator) {
 		this.thresholdCalculator = thresholdCalculator;
 	}
@@ -46,7 +55,32 @@ public final class MAZTEC {
 	 * @see MAZTECParameters
 	 */
 	public void encode(MAZTECParameters params) throws IOException {
-		params.getOutput().put(5.0);
-		params.getOutput().put(1.0);
+		EncodingOutput out = params.getOutput();
+		double min = Double.POSITIVE_INFINITY;
+		double max = Double.NEGATIVE_INFINITY;
+		double lastMin = min;
+		double lastMax = max;
+		int length = 0;
+		for (Double value : params.getInput()) {
+			min = Math.min(min, value);
+			max = Math.max(max, value);
+			if (max > min + this.thresholdCalculator.getCurrentThreshold()) {
+				this.writeLine(out, lastMin, lastMax, length);
+				max = value;
+				min = value;
+				length = 0;
+			}
+			lastMin = min;
+			lastMax = max;
+			length++;
+			this.thresholdCalculator.newSample(value);
+		}
+		this.writeLine(out, min, max, length);
+	}
+
+	protected void writeLine(EncodingOutput out, double min, double max,
+			int length) throws IOException {
+		out.put(length);
+		out.put((max + min) * 0.5);
 	}
 }

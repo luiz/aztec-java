@@ -46,14 +46,25 @@ public final class MAZTECTest {
 		List<Double> signal = asList(1.0, 1.1, 1.0, 0.9, 1.0);
 		MAZTECParameters params = this
 				.createDefaultParametersUsingInput(signal);
-		this.thresholdCalculator.defineThresholds(0.1, 0.15, 0.2, 0.2, 0.15);
+		this.thresholdCalculator.defineThresholds(0.1, 0.15, 0.25, 0.21, 0.2);
 
 		new MAZTEC(this.thresholdCalculator).encode(params);
 
 		assertThat(this.output, contains(5.0, 1.0));
 	}
 
-	// TODO test more
+	@Test
+	public void generatesMoreLinesIfTheInputSignalVariationFallsOffTheAdaptiveThreshold()
+			throws Exception {
+		List<Double> signal = asList(1.0, 1.1, 1.0, 0.9, 1.0);
+		MAZTECParameters params = this
+				.createDefaultParametersUsingInput(signal);
+		this.thresholdCalculator.defineThresholds(0.1, 0.15, 0.25, 0.19, 0.2);
+
+		new MAZTEC(this.thresholdCalculator).encode(params);
+
+		assertThat(this.output, contains(3.0, 1.05, 2.0, 0.95));
+	}
 
 	private MAZTECParameters createDefaultParametersUsingInput(
 			Iterable<Double> signal) {

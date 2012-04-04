@@ -82,5 +82,5 @@ public final class MAZTECParametersTest {
 		assertThat(params.getInitialT(), is(0.01));
 	}
 
-	// Is it worth testing the methods of the builder?
+	// Is it worth testing the other methods of the builder?
 }
