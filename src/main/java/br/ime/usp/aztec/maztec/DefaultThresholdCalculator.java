@@ -67,4 +67,9 @@ public final class DefaultThresholdCalculator implements ThresholdCalculator {
 		return this.threshold;
 	}
 
+	@Override
+	public void reset() {
+		this.statsCalculator.reset();
+	}
+
 }

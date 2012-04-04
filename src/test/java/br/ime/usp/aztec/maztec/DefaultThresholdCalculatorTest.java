@@ -18,6 +18,7 @@ package br.ime.usp.aztec.maztec;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -177,5 +178,12 @@ public final class DefaultThresholdCalculatorTest {
 
 		assertThat(thresholdCalculator.getCurrentThreshold(),
 				closeTo(1.1, 1.0e-10));
+	}
+
+	@Test
+	public void resetsTheStatisticsWhenResetIsCalled() throws Exception {
+		this.thresholdCalculator.reset();
+		assertTrue("Did not call reset() on SignalStatistics",
+				this.stats.resetWasCalled());
 	}
 }

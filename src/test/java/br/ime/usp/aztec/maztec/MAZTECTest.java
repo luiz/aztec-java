@@ -17,6 +17,7 @@ package br.ime.usp.aztec.maztec;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -66,9 +67,41 @@ public final class MAZTECTest {
 		assertThat(this.output, contains(3.0, 1.05, 2.0, 0.95));
 	}
 
+	@Test
+	public void dontResetTheThresholdCalculatorWhenInImprovedModeAndTheInputSignalStaysWithinTheAdaptiveThreshold()
+			throws Exception {
+		List<Double> signal = asList(1.0, 1.1, 1.0, 0.9, 1.0);
+		MAZTECParameters params = this
+				.createDefaultParametersForImproved(signal);
+		this.thresholdCalculator.defineThresholds(0.1, 0.15, 0.25, 0.21, 0.2);
+
+		new MAZTEC(this.thresholdCalculator).encode(params);
+
+		assertThat(this.thresholdCalculator.timesCalledReset(), is(1));
+	}
+
+	@Test
+	public void resetsTheThresholdCalculatorWhenInImprovedModeAndTheInputSignalVariationFallsOffTheAdaptiveThreshold()
+			throws Exception {
+		List<Double> signal = asList(1.0, 1.1, 1.0, 0.9, 1.0);
+		MAZTECParameters params = this
+				.createDefaultParametersForImproved(signal);
+		this.thresholdCalculator.defineThresholds(0.1, 0.15, 0.25, 0.19, 0.2);
+
+		new MAZTEC(this.thresholdCalculator).encode(params);
+
+		assertThat(this.thresholdCalculator.timesCalledReset(), is(2));
+	}
+
 	private MAZTECParameters createDefaultParametersUsingInput(
 			Iterable<Double> signal) {
 		return new MAZTECParameters.Builder().withInput(signal)
+				.withOutput(this.output).build();
+	}
+
+	private MAZTECParameters createDefaultParametersForImproved(
+			List<Double> signal) {
+		return new MAZTECParameters.Builder().improved().withInput(signal)
 				.withOutput(this.output).build();
 	}
 }

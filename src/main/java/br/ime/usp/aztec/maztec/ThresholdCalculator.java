@@ -36,4 +36,8 @@ public interface ThresholdCalculator {
 	 */
 	double getCurrentThreshold();
 
+	/**
+	 * Resets the calculator to its initial state
+	 */
+	void reset();
 }

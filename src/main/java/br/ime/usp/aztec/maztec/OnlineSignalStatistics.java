@@ -59,4 +59,13 @@ public final class OnlineSignalStatistics implements SignalStatistics {
 		this.thirdMoment = this.m3 / this.count;
 	}
 
+	@Override
+	public void reset() {
+		this.count = 0;
+		this.average = 0.0;
+		this.stdDev = 0.0;
+		this.thirdMoment = 0.0;
+		this.m2 = 0.0;
+		this.m3 = 0.0;
+	}
 }

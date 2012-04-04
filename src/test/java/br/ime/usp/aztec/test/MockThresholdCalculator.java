@@ -27,6 +27,7 @@ public final class MockThresholdCalculator implements ThresholdCalculator {
 
 	private double[] thresholds;
 	private int currentThreshold = 0;
+	private int resetCalled = 0;
 
 	@Override
 	public void newSample(double sample) {
@@ -48,5 +49,18 @@ public final class MockThresholdCalculator implements ThresholdCalculator {
 	public void defineThresholds(double... thresholds) {
 		this.currentThreshold = 0;
 		this.thresholds = thresholds;
+	}
+
+	/**
+	 * @return Number of times that the {@link #reset()} method was called after
+	 *         the initialization of this object
+	 */
+	public int timesCalledReset() {
+		return this.resetCalled;
+	}
+
+	@Override
+	public void reset() {
+		this.resetCalled++;
 	}
 }

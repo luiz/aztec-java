@@ -51,4 +51,9 @@ public interface SignalStatistics {
 	 */
 	void update(double value);
 
+	/**
+	 * Resets the statistics to their initial values, as if
+	 * {@link #update(double)} was never called
+	 */
+	void reset();
 }

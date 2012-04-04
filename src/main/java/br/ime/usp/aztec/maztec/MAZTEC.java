@@ -55,7 +55,6 @@ public final class MAZTEC {
 	 * @see MAZTECParameters
 	 */
 	public void encode(MAZTECParameters params) throws IOException {
-		EncodingOutput out = params.getOutput();
 		double min = Double.POSITIVE_INFINITY;
 		double max = Double.NEGATIVE_INFINITY;
 		double lastMin = min;
@@ -65,7 +64,7 @@ public final class MAZTEC {
 			min = Math.min(min, value);
 			max = Math.max(max, value);
 			if (max > min + this.thresholdCalculator.getCurrentThreshold()) {
-				this.writeLine(out, lastMin, lastMax, length);
+				this.writeLine(params, lastMin, lastMax, length);
 				max = value;
 				min = value;
 				length = 0;
@@ -75,12 +74,15 @@ public final class MAZTEC {
 			length++;
 			this.thresholdCalculator.newSample(value);
 		}
-		this.writeLine(out, min, max, length);
+		this.writeLine(params, min, max, length);
 	}
 
-	protected void writeLine(EncodingOutput out, double min, double max,
+	protected void writeLine(MAZTECParameters params, double min, double max,
 			int length) throws IOException {
-		out.put(length);
-		out.put((max + min) * 0.5);
+		params.getOutput().put(length);
+		params.getOutput().put((max + min) * 0.5);
+		if (params.isImproved()) {
+			this.thresholdCalculator.reset();
+		}
 	}
 }

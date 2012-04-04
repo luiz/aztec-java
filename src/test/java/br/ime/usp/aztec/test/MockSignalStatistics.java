@@ -15,8 +15,8 @@ limitations under the License.
  */
 package br.ime.usp.aztec.test;
 
-import br.ime.usp.aztec.maztec.SignalStatistics;
 import br.ime.usp.aztec.maztec.DefaultThresholdCalculator;
+import br.ime.usp.aztec.maztec.SignalStatistics;
 
 /**
  * Only stores fake statistical measures to test if the
@@ -29,6 +29,7 @@ public final class MockSignalStatistics implements SignalStatistics {
 	private double average;
 	private double standardDeviation;
 	private double thirdMoment;
+	private boolean calledReset = false;
 
 	@Override
 	public double getAverage() {
@@ -48,6 +49,11 @@ public final class MockSignalStatistics implements SignalStatistics {
 	@Override
 	public void update(double value) {
 		// Does nothing. I don't care about the signal
+	}
+
+	@Override
+	public void reset() {
+		this.calledReset = true;
 	}
 
 	/**
@@ -78,5 +84,13 @@ public final class MockSignalStatistics implements SignalStatistics {
 	 */
 	public void returnsThirdMoment(double value) {
 		this.thirdMoment = value;
+	}
+
+	/**
+	 * @return true if the {@link #reset()} method was called at least once
+	 *         after the initialization of this object
+	 */
+	public boolean resetWasCalled() {
+		return this.calledReset;
 	}
 }

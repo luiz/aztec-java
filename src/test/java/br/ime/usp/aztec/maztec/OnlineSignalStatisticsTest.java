@@ -92,4 +92,38 @@ public final class OnlineSignalStatisticsTest {
 		stats.update(6.0);
 		assertThat(stats.getThirdMoment(), is(-4.5));
 	}
+
+	@Test
+	public void behavesAsANewObjectAfterResetIsCalled() throws Exception {
+		SignalStatistics oldStats = new OnlineSignalStatistics();
+		oldStats.update(1.0);
+		oldStats.update(4.0);
+		oldStats.update(5.0);
+		oldStats.update(6.0);
+
+		oldStats.reset();
+
+		OnlineSignalStatistics newStats = new OnlineSignalStatistics();
+
+		assertThat(oldStats.getAverage(), is(newStats.getAverage()));
+		assertThat(oldStats.getStandardDeviation(),
+				is(newStats.getStandardDeviation()));
+		assertThat(oldStats.getThirdMoment(), is(newStats.getThirdMoment()));
+
+		oldStats.update(1.0);
+		newStats.update(1.0);
+
+		assertThat(oldStats.getAverage(), is(newStats.getAverage()));
+		assertThat(oldStats.getStandardDeviation(),
+				is(newStats.getStandardDeviation()));
+		assertThat(oldStats.getThirdMoment(), is(newStats.getThirdMoment()));
+
+		oldStats.update(2.0);
+		newStats.update(2.0);
+
+		assertThat(oldStats.getAverage(), is(newStats.getAverage()));
+		assertThat(oldStats.getStandardDeviation(),
+				is(newStats.getStandardDeviation()));
+		assertThat(oldStats.getThirdMoment(), is(newStats.getThirdMoment()));
+	}
 }

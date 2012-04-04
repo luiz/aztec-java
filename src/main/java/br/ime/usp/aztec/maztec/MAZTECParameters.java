@@ -62,6 +62,7 @@ public final class MAZTECParameters {
 	private double tMin;
 	private double tMax;
 	private double initialT;
+	private boolean improved;
 	private Iterable<Double> input;
 	private EncodingOutput output;
 
@@ -104,6 +105,13 @@ public final class MAZTECParameters {
 	}
 
 	/**
+	 * @return The modified AZTEC algorithm should run in "improved" mode?
+	 */
+	public boolean isImproved() {
+		return this.improved;
+	}
+
+	/**
 	 * @return Iterable with input signal values
 	 */
 	public Iterable<Double> getInput() {
@@ -131,6 +139,7 @@ public final class MAZTECParameters {
 			this.params.initialT = DEFAULT_INITIAL_T;
 			this.params.tMin = DEFAULT_T_MIN;
 			this.params.tMax = DEFAULT_T_MAX;
+			this.params.improved = false;
 			this.params.input = new SignalParser(new InputStreamReader(
 					System.in));
 			this.params.output = new WriterEncodingOutput(
@@ -235,6 +244,17 @@ public final class MAZTECParameters {
 		 */
 		public Builder withOutput(EncodingOutput output) {
 			this.params.output = output;
+			return this;
+		}
+
+		/**
+		 * Makes the modified AZTEC algorithm run in improved mode
+		 * 
+		 * @return The builder
+		 * @see MAZTECParameters#isImproved()
+		 */
+		public Builder improved() {
+			this.params.improved = true;
 			return this;
 		}
 
