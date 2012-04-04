@@ -15,8 +15,11 @@ limitations under the License.
  */
 package br.ime.usp.aztec.maztec;
 
+import java.io.IOException;
+
 import org.apache.commons.cli.ParseException;
 
+import br.ime.usp.aztec.AlgorithmMain;
 import br.ime.usp.aztec.io.PleaseHelpMeException;
 import br.ime.usp.aztec.io.ReadOnlyOutputException;
 
@@ -25,9 +28,10 @@ import br.ime.usp.aztec.io.ReadOnlyOutputException;
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class MAZTECMain {
+public final class MAZTECMain implements AlgorithmMain {
 
-	public static void main(String[] args) throws Exception {
+	@Override
+	public void run(String[] args) throws IOException {
 		MAZTECCommandLineParametersParser parser = new MAZTECCommandLineParametersParser();
 		try {
 			MAZTECParameters params = parser.parse(args);
@@ -40,15 +44,14 @@ public final class MAZTECMain {
 			parser.printHelp();
 			System.exit(1);
 		} catch (IllegalArgumentException e) {
-			handleIOError(e);
+			this.handleIOError(e);
 		} catch (ReadOnlyOutputException e) {
-			handleIOError(e);
+			this.handleIOError(e);
 		}
 	}
 
-	private static void handleIOError(RuntimeException e) {
+	private void handleIOError(RuntimeException e) {
 		System.err.println(e.getMessage());
 		System.exit(2);
 	}
-
 }
