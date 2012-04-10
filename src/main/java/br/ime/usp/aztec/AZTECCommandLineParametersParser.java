@@ -34,7 +34,8 @@ public final class AZTECCommandLineParametersParser extends
 		CommandLineParametersParser<AZTECParameters> {
 
 	@Override
-	protected AZTECParameters buildParameters(CommandLine options) {
+	protected AZTECParameters buildParameters(CommandLine options)
+			throws IllegalArgumentException {
 		if (!options.hasOption('K')) {
 			throw new IllegalArgumentException("Mandatory argument not given");
 		}

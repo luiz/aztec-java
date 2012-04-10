@@ -78,6 +78,8 @@ public abstract class CommandLineParametersParser<T> {
 	 *            The options parsed from the command line
 	 * @return An object with these options in a more suitable format for use in
 	 *         an algorithm implementation
+	 * @throws IllegalArgumentException
+	 *             if a mandatory argument is missing
 	 */
 	protected abstract T buildParameters(CommandLine options)
 			throws IllegalArgumentException;
