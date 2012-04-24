@@ -55,9 +55,13 @@ public final class AZTDISCommandLineParametersParser extends
 	protected void addCustomCommandLineOptions(Options defaultOptions) {
 		defaultOptions.addOption("t", true,
 				"Maximum variation of the signal between event points");
-		defaultOptions.addOption("e", true,
-				"Maximum displacement between a value of the encoded signal"
-						+ " and the original signal");
+		defaultOptions
+				.addOption(
+						"e",
+						true,
+						"Maximum displacement between a value of the encoded signal"
+								+ " and the original signal. Should be >= 3"
+								+ " (or 0.3, according to the scale of the ECG you want to encode).");
 		defaultOptions
 				.addOption(
 						"k",
