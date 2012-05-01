@@ -20,7 +20,7 @@ import java.io.IOException;
 import br.ime.usp.aztec.io.EncodingOutput;
 
 /**
- * The algorithm implementation
+ * The AZTEC algorithm implementation
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
@@ -32,7 +32,7 @@ public final class AZTEC {
 	/**
 	 * Encodes the given signal, writing the output to the
 	 * {@link EncodingOutput} specified in the {@link AZTECParameters} passed as
-	 * argument
+	 * argument. Note that this method is NOT thread-safe.
 	 * 
 	 * @param parameters
 	 *            Parameters for the execution of the algorithm, such as input,
