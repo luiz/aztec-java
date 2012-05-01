@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.ime.usp.aztec.aztdis.AZTDISMain;
 import br.ime.usp.aztec.maztec.MAZTECMain;
 
 /**
@@ -35,6 +36,7 @@ public final class Main {
 		algorithms = new HashMap<String, AlgorithmMain>();
 		algorithms.put("AZTEC", new AZTECMain());
 		algorithms.put("MAZTEC", new MAZTECMain());
+		algorithms.put("AZTDIS", new AZTDISMain());
 	}
 
 	public static void main(String[] args) throws IOException {

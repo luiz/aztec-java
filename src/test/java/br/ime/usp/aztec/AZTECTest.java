@@ -22,18 +22,18 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ime.usp.aztec.test.MockEncodingOutput;
+import br.ime.usp.aztec.io.IterableEncodingOutput;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class AZTECTest {
 	private AZTEC aztec;
-	private MockEncodingOutput output;
+	private IterableEncodingOutput output;
 
 	@Before
 	public void setUp() throws Exception {
-		this.output = new MockEncodingOutput();
+		this.output = new IterableEncodingOutput();
 		this.aztec = new AZTEC();
 	}
 

@@ -25,19 +25,19 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ime.usp.aztec.test.MockEncodingOutput;
+import br.ime.usp.aztec.io.IterableEncodingOutput;
 import br.ime.usp.aztec.test.MockThresholdCalculator;
 
 /**
  * @author Luiz Fernando Oliveira Corte Real
  */
 public final class MAZTECTest {
-	private MockEncodingOutput output;
+	private IterableEncodingOutput output;
 	private MockThresholdCalculator thresholdCalculator;
 
 	@Before
 	public void setUp() throws Exception {
-		this.output = new MockEncodingOutput();
+		this.output = new IterableEncodingOutput();
 		this.thresholdCalculator = new MockThresholdCalculator();
 	}
 

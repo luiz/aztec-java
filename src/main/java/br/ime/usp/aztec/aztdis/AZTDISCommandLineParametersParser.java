@@ -48,7 +48,7 @@ public final class AZTDISCommandLineParametersParser extends
 									.openOutputGivenIn(options))).build();
 		}
 		throw new IllegalArgumentException("Mandatory argument not given."
-				+ " Threshold and maximum displacement are mandatory.");
+				+ " -t and -e are mandatory.");
 	}
 
 	@Override

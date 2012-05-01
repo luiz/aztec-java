@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package br.ime.usp.aztec.test;
+package br.ime.usp.aztec.io;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -24,11 +24,12 @@ import br.ime.usp.aztec.io.EncodingOutput;
 
 /**
  * An implementation of {@link EncodingOutput} that is also iterable, so that
- * one can inspect what values were put.
+ * one can inspect what values were put and use them as input for another
+ * method.
  * 
  * @author Luiz Fernando Oliveira Corte Real
  */
-public final class MockEncodingOutput implements Iterable<Double>,
+public final class IterableEncodingOutput implements Iterable<Double>,
 		EncodingOutput {
 
 	private final List<Double> values = new LinkedList<Double>();
