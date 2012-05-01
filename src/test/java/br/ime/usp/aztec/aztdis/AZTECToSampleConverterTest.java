@@ -52,7 +52,7 @@ public final class AZTECToSampleConverterTest {
 
 		Iterable<Double> result = this.converter.convert(aztecEncoding);
 
-		assertThat(result, contains(0.0, 1.02, 5.0, 1.02));
+		assertThat(result, contains(0.0, 1.02, 4.0, 1.02));
 	}
 
 	@Test
@@ -62,18 +62,18 @@ public final class AZTECToSampleConverterTest {
 
 		Iterable<Double> result = this.converter.convert(aztecEncoding);
 
-		assertThat(result, contains(0.0, 1.02, 5.0, 1.2, 7.0, 1.0, 10.0, 1.0));
+		assertThat(result, contains(0.0, 1.02, 5.0, 1.2, 7.0, 1.0, 9.0, 1.0));
 	}
 
 	@Test
 	public void computesTheNextSignificantSampleAfterASlope() throws Exception {
 		Iterable<Double> aztecEncoding = asList(4.0, 1.025, -3.0, 0.25, 4.0,
-				1.475);
+				1.5);
 
 		Iterable<Double> result = this.converter.convert(aztecEncoding);
 
 		assertThat(result,
-				contains(0.0, 1.025, 4.0, 1.025, 7.0, 1.475, 11.0, 1.475));
+				contains(0.0, 1.025, 4.0, 1.025, 7.0, 1.5, 10.0, 1.5));
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public final class AZTECToSampleConverterTest {
 
 		Iterable<Double> result = this.converter.convert(aztecEncoding);
 
-		assertThat(result, contains(0.0, 0.0, 4.0, 0.0, 6.0, 1.0));
+		assertThat(result, contains(0.0, 0.0, 4.0, 0.0, 5.0, 1.0));
 	}
 
 	@Test
@@ -95,6 +95,6 @@ public final class AZTECToSampleConverterTest {
 		Iterable<Double> result = this.converter.convert(aztecEncoding);
 
 		assertThat(result,
-				contains(0.0, 1.0, 1.0, 1.0, 5.0, 4.0, 9.0, 1.0, 13.0, 2.5));
+				contains(0.0, 1.0, 1.0, 1.0, 5.0, 4.0, 9.0, 1.0, 12.0, 2.5));
 	}
 }

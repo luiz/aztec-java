@@ -57,7 +57,7 @@ public final class AZTECToSampleConverter {
 			}
 			currentPosition += sampleDuration;
 		}
-		converted.add(currentPosition);
+		converted.add(currentPosition - 1.0);
 		converted.add(lastSignificantSample);
 		return converted;
 	}
