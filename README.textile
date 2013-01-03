@@ -1,6 +1,8 @@
+!https://api.travis-ci.org/luiz/aztec-java.png(Build status)!
+
 h1. What is this?
 
-Well, this is a collection of ECG (electrocardiogram) compressors based on the AZTEC algorithm: the AZTEC algorithm itself, published in "this article,":http://dx.doi.org/10.1109/TBME.1968.4502549 other that uses the modified AZTEC algorithm, published in "this article,":http://dx.doi.org/10.1109/10.2121 and other that uses the improved modified AZTEC algorithm, published in "this article.":http://dx.doi.org/10.1016/j.compeleceng.2005.02.002
+This is a collection of ECG (electrocardiogram) compressors based on the AZTEC algorithm: the AZTEC algorithm itself, published in "this article,":http://dx.doi.org/10.1109/TBME.1968.4502549 another that uses the modified AZTEC algorithm, published in "this article,":http://dx.doi.org/10.1109/10.2121 and another that uses the improved modified AZTEC algorithm, published in "this article.":http://dx.doi.org/10.1016/j.compeleceng.2005.02.002
 
 h1. How do I use it?
 
