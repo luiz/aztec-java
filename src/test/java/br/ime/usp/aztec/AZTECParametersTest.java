@@ -17,7 +17,9 @@ package br.ime.usp.aztec;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -35,6 +37,17 @@ public final class AZTECParametersTest {
 		// Don't know how to test if the input and output are ok...
 		assertThat(params.getInput(), notNullValue());
 		assertThat(params.getOutput(), notNullValue());
+	}
+
+	@Test
+	public void knowsIfIsDecoding() throws Exception {
+		AZTECParameters encoding = new AZTECParameters.Builder()
+				.withMaximumAcceptableVariation(0.123).build();
+		assertFalse(encoding.isDecoding());
+
+		AZTECParameters decoding = new AZTECParameters.Builder()
+				.withMaximumAcceptableVariation(0.123).decoding().build();
+		assertTrue(decoding.isDecoding());
 	}
 
 	// Is it worth testing the methods of the builder?

@@ -45,7 +45,7 @@ public final class AZTEC {
 	public void encode(AZTECParameters parameters) throws IOException {
 		this.params = parameters;
 		this.state = new ShortLine();
-		for (Double sample : parameters.getInput()) {
+		for (double sample : parameters.getInput()) {
 			this.state.process(sample);
 		}
 		this.state.finish();
@@ -284,5 +284,4 @@ public final class AZTEC {
 					+ "]";
 		}
 	}
-
 }

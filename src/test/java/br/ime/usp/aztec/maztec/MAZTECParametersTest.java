@@ -17,7 +17,9 @@ package br.ime.usp.aztec.maztec;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -80,6 +82,17 @@ public final class MAZTECParametersTest {
 		MAZTECParameters params = new MAZTECParameters.Builder()
 				.withMaximumThreshold(0.01).build();
 		assertThat(params.getInitialT(), is(0.01));
+	}
+
+	@Test
+	public void knowsIfIsDecoding() throws Exception {
+		MAZTECParameters encoding = new MAZTECParameters.Builder()
+				.withMaximumThreshold(0.01).build();
+		assertFalse(encoding.isDecoding());
+
+		MAZTECParameters decoding = new MAZTECParameters.Builder()
+				.withMaximumThreshold(0.01).decoding().build();
+		assertTrue(decoding.isDecoding());
 	}
 
 	// Is it worth testing the other methods of the builder?

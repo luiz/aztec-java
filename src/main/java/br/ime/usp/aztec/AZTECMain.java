@@ -34,7 +34,11 @@ public final class AZTECMain implements AlgorithmMain {
 		AZTECCommandLineParametersParser parser = new AZTECCommandLineParametersParser();
 		try {
 			AZTECParameters params = parser.parse(args);
-			new AZTEC().encode(params);
+			if (params.isDecoding()) {
+				new Decoder().decode(params.getInput(), params.getOutput());
+			} else {
+				new AZTEC().encode(params);
+			}
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();

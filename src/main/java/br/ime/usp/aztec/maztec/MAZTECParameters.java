@@ -63,6 +63,7 @@ public final class MAZTECParameters {
 	private double tMax;
 	private double initialT;
 	private boolean improved;
+	public boolean decoding;
 	private Iterable<Double> input;
 	private EncodingOutput output;
 
@@ -112,6 +113,13 @@ public final class MAZTECParameters {
 	}
 
 	/**
+	 * @return Decode instead of encode
+	 */
+	public boolean isDecoding() {
+		return this.decoding;
+	}
+
+	/**
 	 * @return Iterable with input signal values
 	 */
 	public Iterable<Double> getInput() {
@@ -140,6 +148,7 @@ public final class MAZTECParameters {
 			this.params.tMin = DEFAULT_T_MIN;
 			this.params.tMax = DEFAULT_T_MAX;
 			this.params.improved = false;
+			this.params.decoding = false;
 			this.params.input = new SignalParser(new InputStreamReader(
 					System.in));
 			this.params.output = new WriterEncodingOutput(
@@ -255,6 +264,16 @@ public final class MAZTECParameters {
 		 */
 		public Builder improved() {
 			this.params.improved = true;
+			return this;
+		}
+
+		/**
+		 * Makes the program decode instead of encode
+		 * 
+		 * @return the builder
+		 */
+		public Builder decoding() {
+			this.params.decoding = true;
 			return this;
 		}
 

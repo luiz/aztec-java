@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.apache.commons.cli.ParseException;
 
 import br.ime.usp.aztec.AlgorithmMain;
+import br.ime.usp.aztec.Decoder;
 import br.ime.usp.aztec.io.PleaseHelpMeException;
 import br.ime.usp.aztec.io.ReadOnlyOutputException;
 
@@ -35,8 +36,12 @@ public final class MAZTECMain implements AlgorithmMain {
 		MAZTECCommandLineParametersParser parser = new MAZTECCommandLineParametersParser();
 		try {
 			MAZTECParameters params = parser.parse(args);
-			new MAZTEC(new DefaultThresholdCalculator(params,
-					new OnlineSignalStatistics())).encode(params);
+			if (params.isDecoding()) {
+				new Decoder().decode(params.getInput(), params.getOutput());
+			} else {
+				new MAZTEC(new DefaultThresholdCalculator(params,
+						new OnlineSignalStatistics())).encode(params);
+			}
 			params.getOutput().close();
 		} catch (PleaseHelpMeException e) {
 			parser.printHelp();

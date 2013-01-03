@@ -39,6 +39,9 @@ public final class MAZTECCommandLineParametersParser extends
 		if (options.hasOption('I')) {
 			builder.improved();
 		}
+		if (options.hasOption('d')) {
+			builder.decoding();
+		}
 		return builder
 				.withInput(new SignalParser(this.openInputGivenIn(options)))
 				.withOutput(
@@ -85,6 +88,7 @@ public final class MAZTECCommandLineParametersParser extends
 						+ " Defaults to 0.08");
 		defaultOptions.addOption("I", false,
 				"Use the improved version of modified AZTEC algorithm");
+		defaultOptions.addOption("d", false, "Decode instead of encode");
 	}
 
 	@Override

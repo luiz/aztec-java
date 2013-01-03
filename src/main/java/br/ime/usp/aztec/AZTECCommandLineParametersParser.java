@@ -19,7 +19,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-import br.ime.usp.aztec.AZTECParameters.Builder;
+import br.ime.usp.aztec.AZTECParameters.OptionalParametersBuilder;
 import br.ime.usp.aztec.io.SignalParser;
 import br.ime.usp.aztec.io.WriterEncodingOutput;
 
@@ -33,16 +33,18 @@ import br.ime.usp.aztec.io.WriterEncodingOutput;
 public final class AZTECCommandLineParametersParser extends
 		CommandLineParametersParser<AZTECParameters> {
 
+	private static final String IGNORED_VALUE_JUST_FOR_DECODING = "0";
+
 	@Override
 	protected AZTECParameters buildParameters(CommandLine options)
 			throws IllegalArgumentException {
-		if (!options.hasOption('K')) {
+		if (!options.hasOption('K') && !options.hasOption('d')) {
 			throw new IllegalArgumentException("Mandatory argument not given");
 		}
-		Builder builder = new AZTECParameters.Builder();
-		return builder
+		OptionalParametersBuilder builder = new AZTECParameters.Builder()
 				.withMaximumAcceptableVariation(
-						Double.parseDouble(options.getOptionValue('K')))
+						Double.parseDouble(options.getOptionValue('K',
+								IGNORED_VALUE_JUST_FOR_DECODING)))
 				.withInput(new SignalParser(this.openInputGivenIn(options)))
 				.withOutput(
 						new WriterEncodingOutput(this
@@ -52,8 +54,11 @@ public final class AZTECCommandLineParametersParser extends
 								String.valueOf(AZTECParameters.DEFAULT_T))))
 				.withMaximumLineLength(
 						Double.parseDouble(options.getOptionValue('N',
-								String.valueOf(AZTECParameters.DEFAULT_N))))
-				.build();
+								String.valueOf(AZTECParameters.DEFAULT_N))));
+		if (options.hasOption('d')) {
+			builder.decoding();
+		}
+		return builder.build();
 	}
 
 	@Override
@@ -65,6 +70,7 @@ public final class AZTECCommandLineParametersParser extends
 						+ "Defaults to 4 samples");
 		defaultOptions.addOption("N", true,
 				"Maximum length of a line. Defaults to 25 samples");
+		defaultOptions.addOption("d", false, "Decode instead of encode");
 	}
 
 	@Override

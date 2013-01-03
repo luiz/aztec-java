@@ -46,6 +46,7 @@ public final class AZTECParameters {
 	private double n;
 	private Iterable<Double> input;
 	private EncodingOutput output;
+	private boolean decoding = false;
 
 	private AZTECParameters() {
 	}
@@ -83,6 +84,13 @@ public final class AZTECParameters {
 	 */
 	public EncodingOutput getOutput() {
 		return this.output;
+	}
+
+	/**
+	 * @return true, if the user wants to decode instead of encode
+	 */
+	public boolean isDecoding() {
+		return this.decoding;
 	}
 
 	/**
@@ -162,6 +170,16 @@ public final class AZTECParameters {
 		 */
 		public OptionalParametersBuilder withOutput(EncodingOutput output) {
 			this.params.output = output;
+			return this;
+		}
+
+		/**
+		 * Decode instead of encode
+		 * 
+		 * @return the builder
+		 */
+		public OptionalParametersBuilder decoding() {
+			this.params.decoding = true;
 			return this;
 		}
 

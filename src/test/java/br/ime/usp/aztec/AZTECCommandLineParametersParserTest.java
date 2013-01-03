@@ -18,7 +18,9 @@ package br.ime.usp.aztec;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -114,6 +116,25 @@ public final class AZTECCommandLineParametersParserTest {
 	@Test
 	public void givesDefaultMaximumLineLengthIfNoneGiven() throws Exception {
 		assertThat(this.parser.parse(this.defaultParameters).getN(), is(25.0));
+	}
+
+	@Test
+	public void isEncodingIfDecodeFlagNotSpecified() throws Exception {
+		assertFalse("Should not indicate that is decoding",
+				this.parser.parse(this.defaultParameters).isDecoding());
+	}
+
+	@Test
+	public void extractsDecodingFlagFromCommandLine() throws Exception {
+		AZTECParameters params = this.parser.parse(new String[] { "-K", "20",
+				"-d" });
+		assertTrue("Should indicate that is decoding", params.isDecoding());
+	}
+
+	@Test
+	public void doesNotRequireOtherFlagsWhenEncoding() throws Exception {
+		AZTECParameters params = this.parser.parse(new String[] { "-d" });
+		assertTrue("Should indicate that is decoding", params.isDecoding());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
