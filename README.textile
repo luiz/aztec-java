@@ -1,4 +1,4 @@
-!https://api.travis-ci.org/luiz/aztec-java.png(Build status)!
+!https://api.travis-ci.org/luiz/aztec-java.png(Build status)!:https://travis-ci.org/luiz/aztec-java
 
 h1. What is this?
 
