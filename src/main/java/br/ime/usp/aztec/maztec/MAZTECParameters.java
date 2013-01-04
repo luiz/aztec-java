@@ -63,7 +63,7 @@ public final class MAZTECParameters {
 	private double tMax;
 	private double initialT;
 	private boolean improved;
-	public boolean decoding;
+	private boolean decoding;
 	private Iterable<Double> input;
 	private EncodingOutput output;
 
