@@ -77,22 +77,22 @@ public final class AZTECTest {
 
 	@Test
 	public void encodesASinglePositiveSlope() throws Exception {
-		Iterable<Double> signal = asList(1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.5,
-				1.6, 1.8, 1.9, 2.0);
+		Iterable<Double> signal = asList(1.0, 1.0, 1.0, 1.1, 1.2, 1.3, 1.4,
+				1.5, 1.5, 1.6, 1.8, 1.9, 2.0);
 		AZTECParameters parameters = this
 				.createDefaultParametersUsingInput(signal);
 		this.aztec.encode(parameters);
-		assertThat(this.output, contains(-11.0, 1.0));
+		assertThat(this.output, contains(4.0, 1.05, -9.0, 0.8));
 	}
 
 	@Test
 	public void encodesASingleNegativeSlope() throws Exception {
-		Iterable<Double> signal = asList(2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4,
-				1.3, 1.2, 1.1, 1.0);
+		Iterable<Double> signal = asList(2.0, 2.0, 2.0, 1.9, 1.8, 1.7, 1.6,
+				1.5, 1.4, 1.3, 1.2, 1.1, 1.0);
 		AZTECParameters parameters = this
 				.createDefaultParametersUsingInput(signal);
 		this.aztec.encode(parameters);
-		assertThat(this.output, contains(-11.0, -1.0));
+		assertThat(this.output, contains(4.0, 1.95, -9.0, -0.8));
 	}
 
 	@Test
@@ -126,14 +126,26 @@ public final class AZTECTest {
 	}
 
 	@Test
-	public void encodesAPositiveSlopeFollowedByANegativeSlopeFollowedByAPositiveSlope()
+	public void encodesASlopeAtTheBeginningOfTheSignalAsALineOfTheMinimumLengthThenASlope()
 			throws Exception {
-		Iterable<Double> signal = asList(1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0,
-				0.0, 0.5, 1.0, 1.5, 2.0);
+		Iterable<Double> signal = asList(1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.5,
+				1.6, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4);
 		AZTECParameters parameters = this
 				.createDefaultParametersUsingInput(signal);
 		this.aztec.encode(parameters);
-		assertThat(this.output, contains(-4.0, 3.0, -4.0, -3.0, -4.0, 1.5));
+		assertThat(this.output, contains(4.0, 1.15, -11.0, 1.0));
+	}
+
+	@Test
+	public void encodesAPositiveSlopeFollowedByANegativeSlopeFollowedByAPositiveSlope()
+			throws Exception {
+		Iterable<Double> signal = asList(1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 4.0,
+				3.0, 2.0, 1.0, 0.0, 0.5, 1.0, 1.5, 2.0);
+		AZTECParameters parameters = this
+				.createDefaultParametersUsingInput(signal);
+		this.aztec.encode(parameters);
+		assertThat(this.output,
+				contains(4.0, 1.0, -3.0, 2.0, -4.0, -3.0, -4.0, 1.5));
 	}
 
 	@Test

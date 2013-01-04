@@ -28,6 +28,14 @@ import br.ime.usp.aztec.io.MalformedInputException;
  */
 public final class Decoder {
 	/**
+	 * Decodes a signal encoded using the AZTEC algorithm or one of its modified
+	 * versions.
+	 * 
+	 * This algorithm assumes the encoded signal will never start with a slope.
+	 * If the signal starts with a slope, it is impossible to know the initial
+	 * value of the signal until the algorithm reaches a line. This complicates
+	 * a lot the algorithm and, apparently, was not foreseen by its authors.
+	 * 
 	 * @param encoded
 	 *            Encoded signal to be decoded
 	 * @param output

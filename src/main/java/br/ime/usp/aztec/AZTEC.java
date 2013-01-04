@@ -27,6 +27,7 @@ import br.ime.usp.aztec.io.EncodingOutput;
 public final class AZTEC {
 
 	private AZTECParameters params;
+	private boolean encodedFirstLine;
 	private State state;
 
 	/**
@@ -45,6 +46,7 @@ public final class AZTEC {
 	public void encode(AZTECParameters parameters) throws IOException {
 		this.params = parameters;
 		this.state = new ShortLine();
+		this.encodedFirstLine = false;
 		for (double sample : parameters.getInput()) {
 			this.state.process(sample);
 		}
@@ -62,9 +64,10 @@ public final class AZTEC {
 
 		@Override
 		public void process(double sample) throws IOException {
-			if (this.line.canContain(sample)) {
+			if (this.line.canContain(sample) || !AZTEC.this.encodedFirstLine) {
 				this.line.update(sample);
 				if (!this.line.isTooShort()) {
+					AZTEC.this.encodedFirstLine = true;
 					AZTEC.this.state = new NormalLine(this.line);
 				}
 			} else {
