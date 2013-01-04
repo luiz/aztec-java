@@ -39,7 +39,9 @@ public final class AZTECCommandLineParametersParser extends
 	protected AZTECParameters buildParameters(CommandLine options)
 			throws IllegalArgumentException {
 		if (!options.hasOption('K') && !options.hasOption('d')) {
-			throw new IllegalArgumentException("Mandatory argument not given");
+			throw new IllegalArgumentException("Mandatory argument not given. "
+					+ "You must provide either -K, -d or -h.\n"
+					+ "See the output of -h for more information.");
 		}
 		OptionalParametersBuilder builder = new AZTECParameters.Builder()
 				.withMaximumAcceptableVariation(
